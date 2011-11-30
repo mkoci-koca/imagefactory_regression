@@ -39,10 +39,8 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
-#TMPFILE="bug689863.tmp"
 file01="/etc/init.d/iwhd"
 file02="/etc/iwhd/conf.js"
-#Output1="5S.T..... /etc/iwhd/conf.js"
 Output=""
 
 def setupTest():
@@ -53,9 +51,9 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     print "running aeolus-configure"
-    # if os.system("aeolus-configure") != SUCCESS:
-    #     print "Some error raised in aeolus-configure !"
-    #     return False
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
     return True
    
 #body
@@ -65,9 +63,6 @@ def bodyTest():
     print "test being started"
     #/etc/init.d/iwhd and /etc/iwhd/conf.js should not be touched by running aeolus-configure
     stdout_handle = os.popen("rpm -V iwhd", "r")
-    #Output = stdout_handle.read
-    #  return_code = stdout_handle.returncode
-    #return_code = 0
     for Output in stdout_handle.readlines():
         print "myresult:",Output,
         if Output.find(file01) != -1 or Output.find(file02) != -1:
