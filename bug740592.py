@@ -17,6 +17,9 @@
 #        Created by koca (mkoci@redhat.com)
 #        Date: 28/11/2011
 #        Modified: 28/11/2011
+#        Issue: aeolus-configure creates a /etc/rhevm.json file which imagefactory uses to push
+#               images to rhevm.  The latest version of imagefactory now expects this in
+#               /etc/imagefactory directory.
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -27,6 +30,7 @@
 #necessary libraries
 import os
 import sys
+import shutil
 
 #constants 
 SUCCESS=0
@@ -37,25 +41,54 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
+ExpectedFile01="/etc/imagefactory/vsphere.json"
+ExpectedFile02="/etc/imagefactory/rhevm.json"
+RHEVMbugFile="rhevm740592"
+RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm"
+RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm.bck"
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bz709817"
+    print "Setup of the regression test based on bug740592"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
+    
+    #first backup old rhvm file
+    shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    
+    #first copy the conf. file
+    print "copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm"
+    shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    
+    #rename rhevm.json file ir exists
+    if os.path.isfile(ExpectedFile02):
+        os.remove(ExpectedFile02)
+    
+    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm 
+    print "running aeolus-configure -p rhevm"
+    os.system("aeolus-configure -p rhevm")
+    return True
    
 #body
 def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
+    if os.path.isfile(ExpectedFile02):
+        return True
+    else:
+        return False
  
 #cleanup after test
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
+    if os.path.isfile(RHEVMBackupFile):
+        #copy file back
+        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile)
+    return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
 if setupTest(): 
