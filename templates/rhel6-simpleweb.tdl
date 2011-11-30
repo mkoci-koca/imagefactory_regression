@@ -1,0 +1,28 @@
+<template>
+  <name>rhev-simple-web</name>
+  <os>
+    <name>RHEL-6</name>
+    <version>1</version>
+    <arch>x86_64</arch>
+    <rootpw>redwine</rootpw>
+    <install type='iso'>
+      <iso>http://localhost/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso</iso>
+    </install>
+  </os>
+  <packages>
+    <package name="httpd"/>
+    <package name="php"/>
+  </packages>
+  <files>
+    <file name="/var/www/html/index.html" type="raw">
+      Aeolus Cloud Test page on Build Created for Mumbai & Westford  Private RHEV Cloud
+    </file>
+  </files>
+  <commands>
+    <command name="start_web">
+         /sbin/chkconfig httpd on 2>&amp;1 > /root/launch_cmd.log
+    </command>
+  </commands>
+  <description>RHEL6.1 Web for Private RHEV Clouds</description>
+</template>
+
