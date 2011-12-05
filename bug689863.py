@@ -47,9 +47,9 @@ def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug689863"
     print "Checking if you have enough permission..."
-    #if os.geteuid() != ROOTID:
-    #    print "You must have root permissions to run this script, I'm sorry buddy"
-    #    return False #exit the test
+    if os.geteuid() != ROOTID:
+        print "You must have root permissions to run this script, I'm sorry buddy"
+        return False #exit the test
     print "running aeolus-configure"
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
