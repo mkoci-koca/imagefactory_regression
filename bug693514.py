@@ -45,9 +45,9 @@ def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bz709817"
     print "Checking if you have enough permission..."
-    if os.geteuid() != ROOTID:
-        print "You must have root permissions to run this script, I'm sorry buddy"
-        return False #exit the test
+    #if os.geteuid() != ROOTID:
+    #    print "You must have root permissions to run this script, I'm sorry buddy"
+    #    return False #exit the test
     print "Create directories /var/lib/iwhd and /var/lib/iwhd/images"
     if not os.path.isdir(dirname1):
         os.mkdir(dirname1)

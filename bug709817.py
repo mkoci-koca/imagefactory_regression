@@ -41,9 +41,9 @@ def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bz709817"
     print "Checking if you have enough permission..."
-    if os.geteuid() != ROOTID:
-        print "You must have root permissions to run this script, I'm sorry buddy"
-        return False #exit the test
+    #if os.geteuid() != ROOTID:
+    #    print "You must have root permissions to run this script, I'm sorry buddy"
+    #    return False #exit the test
     print "Checking if iwhd is running..."
     if os.system("service iwhd status") == SUCCESS:
         print "Trying to stop iwhd"

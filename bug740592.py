@@ -51,9 +51,9 @@ def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug740592"
     print "Checking if you have enough permission..."
-    if os.geteuid() != ROOTID:
-        print "You must have root permissions to run this script, I'm sorry buddy"
-        return False #exit the test
+    #if os.geteuid() != ROOTID:
+    #    print "You must have root permissions to run this script, I'm sorry buddy"
+    #    return False #exit the test
     
     #first backup old rhvm file
     shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
