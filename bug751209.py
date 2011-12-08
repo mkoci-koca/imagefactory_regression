@@ -17,7 +17,7 @@
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
 #        Modified: 02/12/2011
-#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=751209
+#        Issue: concurrent builds causes some builds to fail 
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -38,6 +38,14 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
+CrazyCommand="aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target vsphere --template templates/bug751209.tdl; sleep 10;"+\
+              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;"
+LogFile="/var/log/imagefactory.log"
 
 def setupTest():
     print "=============================================="
@@ -46,6 +54,14 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
+    print "cleanup configuration...."
+    os.system("aeolus-cleanup")
+    print "running aeolus-configure....."
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
+    print "clearing log file"
+    os.system("> " + LogFile)
     return True
    
 #body
@@ -53,13 +69,18 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-
+    os.system(CrazyCommand)
+    #todo wait until build process is done. 
+    if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
+        print "Found FAILED or error message in log file"
+        return False
     return True
  
 #cleanup after test
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
+    
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
