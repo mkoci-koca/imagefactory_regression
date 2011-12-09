@@ -16,7 +16,7 @@
 #        Regression test for Image Factory #bug751209
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
-#        Modified: 02/12/2011
+#        Modified: 09/12/2011
 #        Issue: concurrent builds causes some builds to fail 
 # return values:
 # 0 - OK: everything OK
@@ -51,6 +51,7 @@ LogFile="/var/log/imagefactory.log"
 def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug751209"
+    print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"

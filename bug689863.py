@@ -16,7 +16,7 @@
 #        Regression test for Image Factory #bug689863
 #        Created by koca (mkoci@redhat.com)
 #        Date: 28/11/2011
-#        Modified: 28/11/2011
+#        Modified: 09/12/2011
 #        Issue: aeolus-configure deploys /etc/init.d/iwhd and /etc/iwhd/conf.js, however this
 #               is no longer required, as the latest iwhd RPM contains those files.
 # return values:
@@ -46,6 +46,7 @@ Output=""
 def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug689863"
+    print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"

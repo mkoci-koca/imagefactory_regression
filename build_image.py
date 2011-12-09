@@ -13,10 +13,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug709817
+#        Test that building images w/ the various parameters
 #        Created by koca (mkoci@redhat.com)
-#        Date: 22/11/2011
+#        Date: 09/12/2011
 #        Modified: 09/12/2011
+#        Issue: https://tcms.engineering.redhat.com/case/122786/?from_plan=4953 
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -34,49 +35,33 @@ FAILED=1
 RET_SETUPTEST=1
 RET_BODYTEST=2
 RET_CLEANTEST=3
+RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bz709817"
-    print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
+    print "Setup of the sanity test based on 122786 test case from Image Factory test plan"
+    print "See test plan: https://tcms.engineering.redhat.com/case/122786/?from_plan=4953"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "Checking if iwhd is running..."
-    if os.system("service iwhd status") == SUCCESS:
-        print "Trying to stop iwhd"
-        if os.system("service iwhd stop") != SUCCESS:
-            print "Ergh, I couldn't stop iwhd.."
-            return False   
     return True
-
+   
 #body
 def bodyTest():
+#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    if os.system("service mongod status") == SUCCESS:
-        print "stopping the mongod service"
-        os.system("service mongod stop")
-    if os.system("service iwhd start") > SUCCESS and os.system("service mongod status") > SUCCESS:
-        print "Test PASSED. Now starting the iwhd with mongod started"
-        if os.system("service mongod start") == SUCCESS and os.system("service iwhd start") == SUCCESS:
-            return True
-        else:
-            return False
-    else:
-        print "Test FAILED."
-        return False #test fails
-
+    return True
+ 
 #cleanup after test
 def cleanTest():
     print "=============================================="
-    print "Cleaning the mess after test"
+    print "Cleaning the mess after test"    
     return True
-    
-
+ 
 #execute the tests and return value (can be saved as a draft for future tests)
 if setupTest(): 
     if bodyTest():
@@ -98,7 +83,3 @@ else:
     print "Test setup wasn't successful ! Test didn't even proceed !"
     cleanTest()
     sys.exit(RET_SETUPTEST)
-             
-
-
-

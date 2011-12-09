@@ -16,7 +16,7 @@
 #        Regression test for Image Factory #bug759988
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
-#        Modified: 02/12/2011
+#        Modified: 09/12/2011
 #        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=759988
 # return values:
 # 0 - OK: everything OK
@@ -42,6 +42,7 @@ ROOTID=0
 def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug754982"
+    print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
