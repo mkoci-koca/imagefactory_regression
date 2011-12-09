@@ -28,6 +28,7 @@
 #necessary libraries
 import os
 import sys
+import time
 
 #constants 
 SUCCESS=0
@@ -70,7 +71,10 @@ def bodyTest():
     print "=============================================="
     print "test being started"
     os.system(CrazyCommand)
-    #todo wait until build process is done. 
+    print "wait until build process is done"
+    while os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"") != FAILED:
+        time.sleep(5)
+    print "Checking if there is any error in erro log of image factory"
     if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
         print "Found FAILED or error message in log file"
         return False
