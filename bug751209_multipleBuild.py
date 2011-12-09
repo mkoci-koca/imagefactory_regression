@@ -56,13 +56,13 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "cleanup configuration...."
+        print "Cleanup configuration...."
     os.system("aeolus-cleanup")
-    print "running aeolus-configure....."
+    print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
-    print "clearing log file"
+    print "Clearing log file for Image Factory"
     os.system("> " + LogFile)
     return True
    
