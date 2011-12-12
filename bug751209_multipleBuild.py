@@ -74,7 +74,7 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    target_image = array.array()
+    target_image = list()
     for command in CrazyCommand:
         try:
             retcode = subprocess.check_output(command, shell=True)
