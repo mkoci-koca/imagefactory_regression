@@ -76,6 +76,7 @@ def bodyTest():
     target_image = list()
     for command in CrazyCommand:
         try:
+            print command
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
