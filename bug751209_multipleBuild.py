@@ -29,6 +29,8 @@
 import os
 import sys
 import time
+import subprocess
+
 
 #constants 
 SUCCESS=0
@@ -38,7 +40,7 @@ RET_BODYTEST=2
 RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
-#setup
+#setup variables, constants
 CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
               "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
               "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
@@ -68,13 +70,12 @@ def setupTest():
    
 #body
 def bodyTest():
-#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
     #os.system(CrazyCommand)
     for command in CrazyCommand:
         try:
-            retcode = os.popen(command, shell=True)
+            retcode = subprocess.call(command, shell=True)
             if retcode < 0:
                 print >>sys.stderr, "Child was terminated by signal", -retcode
             else:
@@ -85,7 +86,8 @@ def bodyTest():
         time.sleep(10)
     print "wait until build process is done"
     Counter=0
-    while os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"") != FAILED:
+    while os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"") == SUCCESS:
+        print os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"")
         Counter=Counter+1
         time.sleep(60)
         if Counter > 60:
