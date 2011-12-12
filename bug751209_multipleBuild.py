@@ -73,7 +73,15 @@ def bodyTest():
     print "test being started"
     #os.system(CrazyCommand)
     for command in CrazyCommand:
-        os.system(command)
+        try:
+            retcode = os.popen(command, shell=True)
+            if retcode < 0:
+                print >>sys.stderr, "Child was terminated by signal", -retcode
+            else:
+                print >>sys.stderr, "Child returned", retcode
+        except OSError, e:
+            print >>sys.stderr, "Execution failed:", e
+        #os.system(command)
         time.sleep(10)
     print "wait until build process is done"
     Counter=0
