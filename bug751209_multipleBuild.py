@@ -77,16 +77,20 @@ def bodyTest():
     for command in CrazyCommand:
         try:
             retcode = os.popen(command).read()
+            print "output is :"
+            print retcode
             target_image.append(re.search(r'.*Target Image:.*([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
+            return False
         time.sleep(10) #sleep for 10 seconds        
     print "wait until build process is done"
     #setup counter to do not wait longer then 1 hour
     Counter=0
     
     for timage in target_image:
-        os.system("aeolus-cli status --targetimage " + timage + "|grep -i building")
+        print "Let\'s check this image: " + timage
+        #os.system("aeolus-cli status --targetimage " + timage + "|grep -i building")
         while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
             Counter=Counter+1
             #wait a minute
