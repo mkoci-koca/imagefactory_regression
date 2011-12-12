@@ -31,7 +31,6 @@ import sys
 import time
 import subprocess
 import re
-import array
 
 
 #constants 
@@ -78,7 +77,7 @@ def bodyTest():
     for command in CrazyCommand:
         try:
             retcode = subprocess.check_output(command, shell=True)
-            target_image.append(re.search(r'.*Target Image: (.*)  :Status.*',retcode).group(1))
+            target_image.append(re.search(r'.*Target Image:.*([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
         time.sleep(10) #sleep for 10 seconds        
