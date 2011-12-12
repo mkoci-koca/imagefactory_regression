@@ -30,6 +30,8 @@ import os
 import sys
 import time
 import subprocess
+import re
+import array
 
 
 #constants 
@@ -72,26 +74,29 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    #os.system(CrazyCommand)
+    target_image = array()
     for command in CrazyCommand:
         try:
-            retcode = subprocess.call(command, shell=True)
-            if retcode < 0:
-                print >>sys.stderr, "Child was terminated by signal", -retcode
-            else:
-                print >>sys.stderr, "Child returned", retcode
-        except OSError, e:
+            retcode = subprocess.check_output(command, shell=True)
+            target_image.append(re.search(r'.*Target Image: (.*)  :Status.*',retcode).group(1))
+        except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
-        #os.system(command)
-        time.sleep(10)
+        time.sleep(10) #sleep for 10 seconds        
     print "wait until build process is done"
+    #setup counter to do not wait longer then 1 hour
     Counter=0
-    while os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"") == SUCCESS:
-        print os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"")
-        Counter=Counter+1
-        time.sleep(60)
-        if Counter > 60:
-            break
+    
+    for timage in target_image:
+        os.system("aeolus-cli status --targetimage " + timage + "|grep -i building")
+        while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
+            Counter=Counter+1
+            #wait a minute
+            time.sleep(60)
+            #after an hour break the 
+            if Counter > 60:
+                print "Error: timeout over 60 minutes !"
+                return False
+        
     print "Checking if there is any error in erro log of image factory"
     if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
         print "Found FAILED or error message in log file"
