@@ -91,7 +91,6 @@ def bodyTest():
     
     for timage in target_image:
         print "Let\'s check this image: " + timage
-        #os.system("aeolus-cli status --targetimage " + timage + "|grep -i building")
         while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
             Counter=Counter+1
             #wait a minute
@@ -103,7 +102,8 @@ def bodyTest():
         
     print "Checking if there is any error in erro log of image factory"
     if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
-        print "Found FAILED or error message in log file"
+        print "Found FAILED or error message in log file:"
+        os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
         return False
     return True
  
