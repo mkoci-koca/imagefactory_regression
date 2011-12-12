@@ -80,7 +80,7 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-            target_image.append(re.search(r'.*Target Image:.*([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
