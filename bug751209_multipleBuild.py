@@ -39,13 +39,13 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
-CrazyCommand="aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target vsphere --template templates/bug751209.tdl; sleep 10;"+\
-              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;"
+CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;",\
+              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;"]
 LogFile="/var/log/imagefactory.log"
 
 def setupTest():
@@ -71,7 +71,10 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    os.system(CrazyCommand)
+    #os.system(CrazyCommand)
+    for command in CrazyCommand:
+        os.system(command)
+        time.sleep(10)
     print "wait until build process is done"
     Counter=0
     while os.system("ps -ef|grep -v \"grep\\|postgres:\\|dbomatic\\|thin server\"|grep \"aeolus-\"") != FAILED:
