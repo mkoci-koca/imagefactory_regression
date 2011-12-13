@@ -9,4 +9,5 @@ bug709817.py #iwhd initscript continues on in the face of failure
 bug740592.py 
 bug759988.py #service iwhd fails to start.
 #bug751209.py #concurrent builds causes some builds to fail 
+bug761035.py #Build hangs when multiple providers specified
 

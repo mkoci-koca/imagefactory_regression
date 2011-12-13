@@ -13,11 +13,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug751209
+#        Regression test for Image Factory #bug761035
 #        Created by koca (mkoci@redhat.com)
-#        Date: 02/12/2011
-#        Modified: 09/12/2011
-#        Issue: concurrent builds causes some builds to fail 
+#        Date: 13/12/2011
+#        Modified: 13/12/2011
+#        Issue: Build hangs when multiple providers specified 
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -43,19 +43,13 @@ RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=180
 #setup variables, constants
-CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;",\
-              "aeolus-cli build --target vsphere --template templates/bug751209.tdl;"]
+CrazyCommand=["aeolus-cli build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
 LogFile="/var/log/imagefactory.log"
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug751209"
-    print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
+    print "Setup of the regression test based on bug761035 - Build hangs when multiple providers specified"
+    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=761035"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
@@ -82,6 +76,9 @@ def bodyTest():
             print "output is :"
             print retcode
             target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
