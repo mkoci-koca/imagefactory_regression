@@ -94,8 +94,8 @@ def bodyTest():
             #wait a minute
             time.sleep(TIMEOUT)
             #after an hour break the 
-            if Counter > 0:
-                print "Error: timeout over "+TIMEOUT+" minutes !"
+            if Counter > TIMEOUT:
+                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
                 return False
         
     print "Checking if there is any error in erro log of image factory"
