@@ -106,6 +106,10 @@ def bodyTest():
         print "Found FAILED or error message in log file:"
         outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
         print outputtmp
+        print "See the output from log file:"
+        print "======================================================"
+        outputtmp = os.popen("cat " + LogFile).read()
+        print outputtmp
         return False
     return True
  
