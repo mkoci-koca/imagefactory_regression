@@ -3,11 +3,11 @@
 # created by: koca mkoci@redhat.com 
 # date: 09/12/2011
 
-bug689863.py
-bug693514.py
-bug709817.py #iwhd initscript continues on in the face of failure
-bug740592.py 
-bug759988.py #service iwhd fails to start.
-#bug751209.py #concurrent builds causes some builds to fail 
-bug761035.py #Build hangs when multiple providers specified
+bug689863.py  #aeolus-configure should no longer deploy /etc/init.d/iwhd and /etc/iwhd/conf.js
+bug693514.py  #aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
+bug709817.py  #iwhd initscript continues on in the face of failure
+bug740592.py  #imagefactory needs rhevm.json in /etc/imagefactory now
+bug759988.py  #service iwhd fails to start.
+bug761035.py  #Build hangs when multiple providers specified
+bug761163.py  #RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
 

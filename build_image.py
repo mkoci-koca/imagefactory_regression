@@ -13,7 +13,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Test that building images w/ the various parameters
+#        Test that building images w/ the various parameters and templates
 #        Created by koca (mkoci@redhat.com)
 #        Date: 09/12/2011
 #        Modified: 09/12/2011
@@ -38,6 +38,8 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
+LogFileIF="/var/log/imagefactory.log"
+LogFileIWH="/var/log/iwhd.log"
 
 def setupTest():
     print "=============================================="
@@ -47,6 +49,16 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
+    print "Cleanup configuration...."
+    os.system("aeolus-cleanup")
+    print "Running aeolus-configure....."
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
+    print "Clearing log file for Image Factory"
+    os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
     return True
    
 #body
@@ -54,12 +66,14 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
+    print "Test is still not ready. Returning True though !!"
     return True
  
 #cleanup after test
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"    
+    #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)

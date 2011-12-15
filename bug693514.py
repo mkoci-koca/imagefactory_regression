@@ -17,6 +17,7 @@
 #        Created by koca (mkoci@redhat.com)
 #        Date: 22/11/2011
 #        Modified: 09/12/2011
+#        Issue: aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK

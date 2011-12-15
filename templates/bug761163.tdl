@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+  <name>r57_brew</name>
+  <description>r57-brew-simple</description>
+  <os>
+    <name>RHEL-5</name>
+    <version>U7</version>
+    <arch>x86_64</arch>
+    <install type="url">
+      <url>http://download.devel.redhat.com/released/RHEL-5-Server/U7/x86_64/os/</url>
+    </install>
+    <rootpw>redhat</rootpw>
+  </os>
+</template>
