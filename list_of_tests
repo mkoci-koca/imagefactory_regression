@@ -1,7 +1,8 @@
-# list of regressin tests to execute in Jenkins
+# list of regression tests to execute in Hudson/Jenkins
 # you can use even parameters for each script
 # created by: koca mkoci@redhat.com 
 # date: 09/12/2011
+# modified: 15/12/2011
 
 bug689863.py  #aeolus-configure should no longer deploy /etc/init.d/iwhd and /etc/iwhd/conf.js
 bug693514.py  #aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
@@ -10,4 +11,7 @@ bug740592.py  #imagefactory needs rhevm.json in /etc/imagefactory now
 bug759988.py  #service iwhd fails to start.
 bug761035.py  #Build hangs when multiple providers specified
 bug761163.py  #RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
+bug745445.py  #Relevant message should be displayed while stopping iwhd
+#bug758687.py  #Wild char '&' in template will cause XML parse error
+#bug768028.py  #F16 doesn't build in Factory
 

@@ -13,11 +13,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug761035
+#        Regression test for Image Factory #bug768028 - F16 doesn't build in Factory
 #        Created by koca (mkoci@redhat.com)
-#        Date: 13/12/2011
-#        Modified: 13/12/2011
-#        Issue: Build hangs when multiple providers specified 
+#        Date: 15/12/2011
+#        Modified: 15/12/2011
+#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=768028
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -28,10 +28,6 @@
 #necessary libraries
 import os
 import sys
-import time
-import subprocess
-import re
-
 
 #constants 
 SUCCESS=0
@@ -41,80 +37,43 @@ RET_BODYTEST=2
 RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
-TIMEOUT=180
-#setup variables, constants
-CrazyCommand=["aeolus-cli build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
-LogFile="/var/log/imagefactory.log"
+#setup
+LogFileIF="/var/log/imagefactory.log"
+LogFileIWH="/var/log/iwhd.log"
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug761035 - Build hangs when multiple providers specified"
-    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=761035"
+    print "Setup of the regression test based on bug768028 - F16 doesn't build in Factory"
+    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=768028"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-        print "Cleanup configuration...."
+    print "Cleanup configuration...."
     os.system("aeolus-cleanup")
     print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
-    os.system("> " + LogFile)
+    os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
     return True
    
 #body
 def bodyTest():
+#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    target_image = list()
-    for command in CrazyCommand:
-        try:
-            print command
-            retcode = os.popen(command).read()
-            print "output is :"
-            print retcode
-            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-
-        except subprocess.CalledProcessError, e:
-            print >>sys.stderr, "Execution failed:", e
-            return False
-        time.sleep(10) #sleep for 10 seconds        
-    print "wait until build process is done"
-    #setup counter to do not wait longer then 1 hour
-    Counter=0
-    
-    for timage in target_image:
-        print "Let\'s check this image: " + timage
-        while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
-            Counter=Counter+1
-            #wait a minute
-            time.sleep(TIMEOUT)
-            #after an hour break the 
-            if Counter > TIMEOUT:
-                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-                return False
-        
-    print "Checking if there is any error in erro log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
-        print "Found FAILED or error message in log file:"
-        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
-        print outputtmp
-        print "See the output from log file " + LogFile + ":"
-        print "======================================================"
-        outputtmp = os.popen("cat " + LogFile).read()
-        print outputtmp
-        return False
+    print "Test is still not ready. Returning True though !!"
     return True
  
 #cleanup after test
 def cleanTest():
     print "=============================================="
-    print "Cleaning the mess after test"
-    
+    print "Cleaning the mess after test"    
+    #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
