@@ -40,7 +40,7 @@ ROOTID=0
 #setup
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
-CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl;"
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl 2>&1|grep -i \"failed\\|error\""
 
 def setupTest():
     print "=============================================="
@@ -67,7 +67,7 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    if os.system(CrazyCommand) != SUCCESS:
+    if os.system(CrazyCommand) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
