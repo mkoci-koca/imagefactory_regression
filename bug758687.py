@@ -40,7 +40,8 @@ ROOTID=0
 #setup
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
-CrazyCommand="imagefactory --debug --target rhevm --template templates/bug758687.tdl |& grep -i -200 \"failed\\|error\""
+TmpFile="deleteme_bug758687"
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug758687.tdl |& tee " + TmpFile 
 
 def setupTest():
     print "=============================================="
@@ -67,7 +68,8 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    if os.system(CrazyCommand) == SUCCESS:
+    os.system(CrazyCommand)
+    if os.system("grep -i \"error\\|failed\" " +  TmpFile) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
@@ -82,7 +84,9 @@ def bodyTest():
 #cleanup after test
 def cleanTest():
     print "=============================================="
-    print "Cleaning the mess after test"    
+    print "Cleaning the mess after test"
+    if os.path.isfile(TmpFile):    
+        os.remove(TmpFile)
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  
