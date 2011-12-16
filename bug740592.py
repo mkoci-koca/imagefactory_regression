@@ -68,7 +68,9 @@ def setupTest():
     
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm 
     print "running aeolus-configure -p rhevm"
-    os.system("aeolus-configure -p rhevm")
+    if os.system("aeolus-configure -p rhevm") != SUCCESS:
+        print "Some error raised in aeolus-configure with parameter -p rhevm !"
+        return False
     return True
    
 #body

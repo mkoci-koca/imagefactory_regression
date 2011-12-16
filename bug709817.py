@@ -17,6 +17,7 @@
 #        Created by koca (mkoci@redhat.com)
 #        Date: 22/11/2011
 #        Modified: 09/12/2011
+#        Issue: iwhd initscript continues on in the face of failure
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK

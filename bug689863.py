@@ -51,10 +51,10 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "running aeolus-configure"
-    if os.system("aeolus-configure") != SUCCESS:
-        print "Some error raised in aeolus-configure !"
-        return False
+    #print "running aeolus-configure"
+    #if os.system("aeolus-configure") != SUCCESS:
+    #    print "Some error raised in aeolus-configure !"
+    #    return False
     return True
    
 #body

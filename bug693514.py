@@ -58,7 +58,7 @@ def setupTest():
     if os.system("> " + dirname2 + filename) == SUCCESS:
         return True
     else:
-        return True
+        return False
     
 
 #body

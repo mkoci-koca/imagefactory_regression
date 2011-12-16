@@ -44,7 +44,8 @@ ROOTID=0
 TIMEOUT=180
 #setup variables, constants
 CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug761163.tdl;"]
-LogFile="/var/log/imagefactory.log"
+LogFileIF="/var/log/imagefactory.log"
+LogFileIWH="/var/log/iwhd.log"
 
 def setupTest():
     print "=============================================="
@@ -61,7 +62,9 @@ def setupTest():
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
-    os.system("> " + LogFile)
+    os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
     return True
    
 #body
@@ -97,14 +100,18 @@ def bodyTest():
                 return False
         
     print "Checking if there is any error in erro log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
+    if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
         print "Found FAILED or error message in log file:"
-        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
+        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
         print outputtmp
-        print "See the output from log file " + LogFile + ":"
+        print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
-        outputtmp = os.popen("cat " + LogFile).read()
+        outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
+        print "See the output from log file " + LogFileIWH + ":"
+        print "======================================================"
+        outputtmp = os.popen("cat " + LogFileIWH).read()
+        print outputtmp        
         return False
     return True
  
