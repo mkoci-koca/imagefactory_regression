@@ -40,7 +40,7 @@ ROOTID=0
 #setup
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
-CrazyCommand=["imagefactory --debug --target rhevm --template templates/bug758687.tdl;"]
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug758687.tdl;"
 
 def setupTest():
     print "=============================================="
