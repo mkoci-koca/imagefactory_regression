@@ -13,5 +13,5 @@ bug761035.py  #Build hangs when multiple providers specified
 bug761163.py  #RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
 bug745445.py  #Relevant message should be displayed while stopping iwhd
 bug758687.py  #Wild char '&' in template will cause XML parse error
-#bug768028.py  #F16 doesn't build in Factory
+bug768028.py  #F16 doesn't build in Factory
 
