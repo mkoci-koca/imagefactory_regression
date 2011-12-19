@@ -1,0 +1,13 @@
+<template>
+  <name>rhev-simple-web</name>
+  <os>
+    <name>RHEL-6</name>
+    <version>1</version>
+    <arch>x86_64</arch>
+    <rootpw>redwine</rootpw>
+    <install type='iso'>
+      <iso>http://10.34.30.210/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso</iso>
+    </install>
+  </os>
+  <description>RHEL6.1 Web for Private RHEV Clouds</description>
+</template>
