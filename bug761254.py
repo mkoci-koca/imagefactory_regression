@@ -85,7 +85,7 @@ def setupTest():
     os.system("> " + LogFileIWH)
     return True
    
-#body
+#body - the core of the test
 def bodyTest():
     print "=============================================="
     print "test being started"
@@ -96,11 +96,15 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-            if not target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1)):
+            tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+            if  tempvar == None:
                 print "An unknown error occurred. Check the log file out:"
                 print "======================================================"
                 outputtmp = os.popen("cat " + LogFileIF).read()
-                print outputtmp    
+                print outputtmp
+                return False
+            else:
+                target_image.append(tempvar.group(1))   
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
