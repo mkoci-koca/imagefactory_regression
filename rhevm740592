@@ -5,12 +5,12 @@ parameters:
   package_provider: rpm
 # Uncomment and provide values to match your RHEV environment.
 # Values below are examples.
-  rhevm_nfs_server: nfs.server.com
+  rhevm_nfs_server: 10.34.30.210
   rhevm_nfs_export: /export/export_domain
   rhevm_nfs_mount_point: /mnt/rhevm-nfs
   rhevm_deltacloud_username: username@fqdn
   rhevm_deltacloud_password: password
-  rhevm_deltacloud_provider: https://rhevm.server.com:8443/api
+  rhevm_deltacloud_provider: https://10.34.30.210:8443/api
   rhevm_push_timeout: 1800
 classes:
 - aeolus::conductor
