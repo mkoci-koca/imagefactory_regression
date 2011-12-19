@@ -98,9 +98,13 @@ def bodyTest():
             print retcode
             tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
             if  tempvar == None:
-                print "An unknown error occurred. Check the log file out:"
+                print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
                 print "======================================================"
                 outputtmp = os.popen("cat " + LogFileIF).read()
+                print outputtmp
+                print "See the template templates/bug761254.tdl"
+                print "======================================================"
+                outputtmp = os.popen("cat templates/bug761254.tdl").read()
                 print outputtmp
                 return False
             else:
