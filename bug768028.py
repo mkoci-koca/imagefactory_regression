@@ -29,6 +29,9 @@
 import os
 import sys
 
+import oauth2 as oauth
+import httplib2
+import json
 #constants 
 SUCCESS=0
 FAILED=1
@@ -42,6 +45,14 @@ LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 TmpFile="deleteme_bug768028"
 CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + TmpFile
+consumer = oauth.Consumer(key='key', secret='secret')
+sig_method = oauth.SignatureMethod_HMAC_SHA1()
+params = {'oauth_version':"0.4.4",
+          'oauth_nonce':oauth.generate_nonce(),
+          'oauth_timestamp':oauth.generate_timestamp(),
+          'oauth_signature_method':sig_method.name,
+          'oauth_consumer_key':consumer.key}
+url_https="https://localhost:8075/imagefactory/builders/"
 
 def setupTest():
     print "=============================================="
@@ -52,7 +63,8 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     print "Cleanup configuration...."
-    os.system("aeolus-cleanup")
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
     print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
@@ -62,7 +74,18 @@ def setupTest():
     print "Clearing log file for Image Warehouse"
     os.system("> " + LogFileIWH)
     return True
-   
+
+#this functions suppose to be as a help function to do not write one code multiple times
+def helpTest(imageTest):
+    url = url_https + imageTest
+    req = oauth.Request(method='GET', url=url, parameters=params)
+    sig = sig_method.sign(req, consumer, None)
+    req['oauth_signature'] = sig
+    r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
+    response = 'Response headers: %s\nContent: %s' % (r,c)
+    print response
+    return c
+
 #body
 def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images

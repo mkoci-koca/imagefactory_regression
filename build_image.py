@@ -50,7 +50,8 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     print "Cleanup configuration...."
-    os.system("aeolus-cleanup")
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
     print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
@@ -66,7 +67,7 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    print "Test is still not ready. Returning True though !!"
+    print "Test is not still ready. Returning True though !!"
     return True
  
 #cleanup after test

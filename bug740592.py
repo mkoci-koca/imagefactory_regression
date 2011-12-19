@@ -65,8 +65,13 @@ def setupTest():
     #rename rhevm.json file ir exists
     if os.path.isfile(ExpectedFile02):
         os.remove(ExpectedFile02)
-    
-    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm 
+        
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
+        
+    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
     print "running aeolus-configure -p rhevm"
     if os.system("aeolus-configure -p rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure with parameter -p rhevm !"

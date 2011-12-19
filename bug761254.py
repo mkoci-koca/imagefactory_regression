@@ -73,8 +73,9 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-        print "Cleanup configuration...."
-    os.system("aeolus-cleanup")
+    print "Cleanup configuration...."
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
     print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
@@ -84,6 +85,17 @@ def setupTest():
     print "Clearing log file for Image Warehouse"
     os.system("> " + LogFileIWH)
     return True
+
+#this functions suppose to be as a help function to do not write one code multiple times
+def helpTest(imageTest):
+    url = url_https + imageTest
+    req = oauth.Request(method='GET', url=url, parameters=params)
+    sig = sig_method.sign(req, consumer, None)
+    req['oauth_signature'] = sig
+    r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
+    response = 'Response headers: %s\nContent: %s' % (r,c)
+    print response
+    return c
    
 #body - the core of the test
 def bodyTest():
@@ -118,15 +130,8 @@ def bodyTest():
     Counter=0
     
     for timage in target_image:
-        print "Let\'s check this image: " + timage
-        url = url_https + timage
-        req = oauth.Request(method='GET', url=url, parameters=params)
-        sig = sig_method.sign(req, consumer, None)
-        req['oauth_signature'] = sig
-        r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-        response = 'Response headers: %s\nContent: %s' % (r,c)
-        print response
-        data = json.loads(c)
+        print "Let\'s check this image: " + timage      
+        data = json.loads(helpTest(timage))
         print "Data Status: " + data['status']
         while data['status'] == "BUILDING":
             Counter = Counter + 1
@@ -157,14 +162,7 @@ def bodyTest():
     #check if status is either complete or building
     for timage in target_image:
         print "Let\'s check this image: " + timage
-        url = url_https + timage
-        req = oauth.Request(method='GET', url=url, parameters=params)
-        sig = sig_method.sign(req, consumer, None)
-        req['oauth_signature'] = sig
-        r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-        response = 'Response headers: %s\nContent: %s' % (r,c)
-        print response
-        data = json.loads(c)
+        data = json.loads(helpTest(timage))
         print "Data Status for image "+timage+": " + data['status']
         while data['status'] == "BUILDING":
             Counter = Counter + 1
