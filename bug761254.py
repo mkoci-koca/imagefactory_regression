@@ -74,11 +74,11 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
         print "Cleanup configuration...."
-    #os.system("aeolus-cleanup")
+    os.system("aeolus-cleanup")
     print "Running aeolus-configure....."
-    #if os.system("aeolus-configure") != SUCCESS:
-    #    print "Some error raised in aeolus-configure !"
-    #    return False
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
     print "Clearing log file for Image Factory"
     os.system("> " + LogFileIF)
     print "Clearing log file for Image Warehouse"
