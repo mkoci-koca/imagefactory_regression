@@ -34,57 +34,56 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 #welcome message
 WELCOME_MESSAGE=os.system("date")
-UNEXPECTED_ERROR_MESSAGE="An unexpected error occur"
-SUCCESS_MESSAGE="Success message"
-SETUPTEST_MESSAGE="Setup test message"
-BODYTEST_MESSAGE="Body test message"
-CLEANTEST_MESSAGE="Clean test message"
+UNEXPECTED_ERROR_MESSAGE="An unexpected error - test FAILED !!"
+SUCCESS_MESSAGE="PASSED"
+SETUPTEST_MESSAGE="Setup of the test FAILED !!"
+BODYTEST_MESSAGE="Body FAILED !!"
+CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
 return_value=INIT_VALUE
 
 if len(sys.argv) > 1:
     print WELCOME_MESSAGE
     for arg in sys.argv[1:]:
-        print arg
         rettmpvalue=os.system("python "+arg)
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
-            print SUCCESS_MESSAGE
+            print arg + ".........."+SUCCESS_MESSAGE
             if return_value == INIT_VALUE:
                 return_value = rettmpvalue
             elif return_value == FAILED:
                 return_value = SUCCESS_FAILED
                 
         elif rettmpvalue == RET_SETUPTEST:
-            print SETUPTEST_MESSAGE
+            print arg + ".........."+SETUPTEST_MESSAGE
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_BODYTEST:
-            print BODYTEST_MESSAGE
+            print arg + ".........."+BODYTEST_MESSAGE
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_CLEANTEST:
-            print CLEANTEST_MESSAGE
+            print arg + ".........."+CLEANTEST_MESSAGE
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
-            print UNEXPECTED_ERROR_MESSAGE
+            print arg + ".........."+UNEXPECTED_ERROR_MESSAGE
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         else:
-            print ERROR_MESSAGE
+            print arg + ".........."+ERROR_MESSAGE
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
