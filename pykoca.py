@@ -43,9 +43,9 @@ ERROR_MESSAGE="Error message"
 workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudForms/job/ImageFactory-KocaTesting2/ws/"
 return_value=INIT_VALUE
 
+os.system("date")
+    
 if len(sys.argv) > 1:
-    os.system("date")
-    print "=================== Aaaand winner is =============================="
     for arg in sys.argv[1:]:
         os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"") 
         rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
@@ -106,6 +106,7 @@ if len(sys.argv) > 1:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
+    print "=================== Aaaand winner is =============================="
 else:
     print "Please, provide at least one argument buddy !"
     sys.exit(return_value)
