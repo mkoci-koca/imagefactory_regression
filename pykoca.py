@@ -44,7 +44,8 @@ workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudFo
 return_value=INIT_VALUE
 
 if len(sys.argv) > 1:
-    print WELCOME_MESSAGE
+    os.system("date")
+    print "=================== Aaaand winner is =============================="
     for arg in sys.argv[1:]:
         os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"") 
         rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
