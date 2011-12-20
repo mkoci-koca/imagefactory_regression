@@ -45,6 +45,7 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=180
+MINUTE=60
 #setup variables, constants
 CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug761163.tdl;"]
 LogFileIF="/var/log/imagefactory.log"
@@ -101,7 +102,20 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+            tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+            if  tempvar == None:
+                print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
+                print "======================================================"
+                outputtmp = os.popen("cat " + LogFileIF).read()
+                print outputtmp
+                print "See the template templates/bug761163.tdl"
+                print "======================================================"
+                outputtmp = os.popen("cat templates/bug761163.tdl").read()
+                print outputtmp
+                return False
+            else:
+                target_image.append(tempvar.group(1))                
+            #target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
@@ -112,10 +126,13 @@ def bodyTest():
     
     for timage in target_image:
         print "Let\'s check this image: " + timage
-        while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
+        data = json.loads(helpTest(timage))
+        print "Data Status: " + data['status']
+        #while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
+        while data['status'] == "BUILDING":
             Counter=Counter+1
             #wait a minute
-            time.sleep(TIMEOUT)
+            time.sleep(MINUTE)
             #after an hour break the 
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
@@ -135,6 +152,26 @@ def bodyTest():
         outputtmp = os.popen("cat " + LogFileIWH).read()
         print outputtmp        
         return False
+#check if status is either complete or building
+    for timage in target_image:
+        print "Let\'s check this image: " + timage
+        data = json.loads(helpTest(timage))
+        print "Data Status for image "+timage+": " + data['status']
+        if data['status'] != "COMPLETED":
+            print "Build "+timage+" is not completed for some reason! It looks it stuck in the NEW status."
+            print "Perhaps you can find something in the log file " + LogFileIF + ":"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIF).read()
+            print outputtmp
+            print "See the output from log file " + LogFileIWH + " too:"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIWH).read()
+            print outputtmp        
+            print "See the template templates/bug761163.tdl"
+            print "======================================================"
+            outputtmp = os.popen("cat templates/bug761163.tdl").read()
+            print outputtmp
+            return False    
     return True
  
 #cleanup after test

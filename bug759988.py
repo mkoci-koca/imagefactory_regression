@@ -13,11 +13,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug759988
+#        Regression test for Image Factory #bug759988 
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
 #        Modified: 09/12/2011
-#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=759988
+#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=759988 - checking aeolus-check-services 
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -38,6 +38,9 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
+TmpFile="deleteme_bug759988"
+CrazyCommand="aeolus-check-services |& tee " + TmpFile
+
 
 def setupTest():
     print "=============================================="
@@ -61,8 +64,9 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    if os.system("aeolus-check-services|grep -i FAIL") == SUCCESS:
-        print "Something hasn't started yet ! See error logs."
+    os.system(CrazyCommand)
+    if os.system("grep -4 -i fail " + TmpFile) == SUCCESS:
+        print "Fail has been found ! See error logs."
         return False    
     return True
  
