@@ -70,7 +70,7 @@ def bodyTest():
     os.system("ls -la " + dirname1 + " " + dirname2)
     print "Running aeolus-cleanup"
     if os.system("aeolus-cleanup") != SUCCESS:
-        sys.exit(RET_UNEXPECTED_ERROR)
+        sys.exit(RET_BODYTEST)
     if os.system("ls -la " + dirname2) != SUCCESS and os.system("ls -la " + dirname1) != SUCCESS:
         return True
     else:

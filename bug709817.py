@@ -62,13 +62,12 @@ def bodyTest():
         print "stopping the mongod service"
         os.system("service mongod stop")
     if os.system("service iwhd start") > SUCCESS and os.system("service mongod status") > SUCCESS:
-        print "Test PASSED. Now starting the iwhd with mongod started"
+        print "Looks OK, now starting the iwhd with mongod started"
         if os.system("service mongod start") == SUCCESS and os.system("service iwhd start") == SUCCESS:
             return True
         else:
             return False
     else:
-        print "Test FAILED."
         return False #test fails
 
 #cleanup after test

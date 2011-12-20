@@ -71,7 +71,6 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"    
-    
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)

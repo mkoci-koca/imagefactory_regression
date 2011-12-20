@@ -40,12 +40,13 @@ SETUPTEST_MESSAGE="Setup of the test FAILED !!"
 BODYTEST_MESSAGE="Body FAILED !!"
 CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
+workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudForms/job/ImageFactory-KocaTesting2/ws/"
 return_value=INIT_VALUE
 
 if len(sys.argv) > 1:
     print WELCOME_MESSAGE
     for arg in sys.argv[1:]:
-        rettmpvalue=os.system("python "+arg)
+        rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
             print arg + ".........."+SUCCESS_MESSAGE
@@ -55,35 +56,35 @@ if len(sys.argv) > 1:
                 return_value = SUCCESS_FAILED
                 
         elif rettmpvalue == RET_SETUPTEST:
-            print arg + ".........."+SETUPTEST_MESSAGE
+            print arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_BODYTEST:
-            print arg + ".........."+BODYTEST_MESSAGE
+            print arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_CLEANTEST:
-            print arg + ".........."+CLEANTEST_MESSAGE
+            print arg + ".........."+CLEANTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
-            print arg + ".........."+UNEXPECTED_ERROR_MESSAGE
+            print arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
                 return_value = FAILED
                 
         else:
-            print arg + ".........."+ERROR_MESSAGE
+            print arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
