@@ -59,7 +59,8 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_SETUPTEST:
             print arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             print "The output of the error log is: "
-            os.system("cat " + arg.strip() + ".log")
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            print retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -68,7 +69,8 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_BODYTEST:
             print arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             print "The output of the error log is: "
-            os.system("cat " + arg.strip() + ".log")
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            print retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -77,7 +79,8 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_CLEANTEST:
             print arg + ".........."+CLEANTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             print "The output of the error log is: "
-            os.system("cat " + arg.strip() + ".log")
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            print retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -86,7 +89,8 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
             print arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             print "The output of the error log is: "
-            os.system("cat " + arg.strip() + ".log")
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            print retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -95,7 +99,8 @@ if len(sys.argv) > 1:
         else:
             print arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
             print "The output of the error log is: "
-            os.system("cat " + arg.strip() + ".log")
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            print retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
