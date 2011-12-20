@@ -33,7 +33,7 @@ RET_CLEANTEST=3
 #unexpected error occour
 RET_UNEXPECTED_ERROR=4
 #welcome message
-WELCOME_MESSAGE=str(os.system("date")) + " - Tests are running...Please wait"
+WELCOME_MESSAGE="Tests are running...Please wait"
 UNEXPECTED_ERROR_MESSAGE="An unexpected error - test FAILED !!"
 SUCCESS_MESSAGE="PASSED"
 SETUPTEST_MESSAGE="Setup of the test FAILED !!"
@@ -45,12 +45,13 @@ return_value=INIT_VALUE
 
 if len(sys.argv) > 1:
     print WELCOME_MESSAGE
+    os.system("date")
     for arg in sys.argv[1:]:
-        print "Test " + arg + "is being started. For further info see the log: " + workspace+arg.strip()+ ".log" 
-        rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
+        #print "Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log" 
+        rettmpvalue=os.system("python "+ arg + " >& | tee " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
-            print arg + ".........."+SUCCESS_MESSAGE
+            print arg + ".........."+SUCCESS_MESSAGE + " ("+ workspace+arg.strip()+ ".log)"
             if return_value == INIT_VALUE:
                 return_value = rettmpvalue
             elif return_value == FAILED:
