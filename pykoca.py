@@ -46,7 +46,6 @@ return_value=INIT_VALUE
 if len(sys.argv) > 1:
     print WELCOME_MESSAGE
     for arg in sys.argv[1:]:
-        #print "Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log"
         os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"") 
         rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
@@ -59,6 +58,8 @@ if len(sys.argv) > 1:
                 
         elif rettmpvalue == RET_SETUPTEST:
             print arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
+            print "The output of the error log is: "
+            os.system("cat " + arg.strip() + ".log")
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -66,6 +67,8 @@ if len(sys.argv) > 1:
                 
         elif rettmpvalue == RET_BODYTEST:
             print arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
+            print "The output of the error log is: "
+            os.system("cat " + arg.strip() + ".log")
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -73,6 +76,8 @@ if len(sys.argv) > 1:
                 
         elif rettmpvalue == RET_CLEANTEST:
             print arg + ".........."+CLEANTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
+            print "The output of the error log is: "
+            os.system("cat " + arg.strip() + ".log")
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -80,6 +85,8 @@ if len(sys.argv) > 1:
                 
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
             print arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
+            print "The output of the error log is: "
+            os.system("cat " + arg.strip() + ".log")
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -87,6 +94,8 @@ if len(sys.argv) > 1:
                 
         else:
             print arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
+            print "The output of the error log is: "
+            os.system("cat " + arg.strip() + ".log")
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
             elif return_value == INIT_VALUE:
@@ -94,5 +103,6 @@ if len(sys.argv) > 1:
 else:
     print "Please, provide at least one argument buddy !"
     sys.exit(return_value)
+#now create final nice looking output message. 
 sys.exit(return_value)
 
