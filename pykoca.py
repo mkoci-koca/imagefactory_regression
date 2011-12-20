@@ -33,14 +33,14 @@ RET_CLEANTEST=3
 #unexpected error occour
 RET_UNEXPECTED_ERROR=4
 #welcome message
-WELCOME_MESSAGE=os.system("date") + " - Tests are running...Please wait"
+WELCOME_MESSAGE=str(os.system("date")) + " - Tests are running...Please wait"
 UNEXPECTED_ERROR_MESSAGE="An unexpected error - test FAILED !!"
 SUCCESS_MESSAGE="PASSED"
 SETUPTEST_MESSAGE="Setup of the test FAILED !!"
 BODYTEST_MESSAGE="Body FAILED !!"
 CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
-workspace="/../../ws/"
+workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudForms/job/ImageFactory-KocaTesting2/ws/"
 return_value=INIT_VALUE
 
 if len(sys.argv) > 1:
