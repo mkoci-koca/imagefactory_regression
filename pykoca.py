@@ -46,8 +46,9 @@ return_value=INIT_VALUE
 if len(sys.argv) > 1:
     print WELCOME_MESSAGE
     for arg in sys.argv[1:]:
-        #print "Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log" 
-        rettmpvalue=os.system("python "+ arg + " > " + arg.strip() + ".log")
+        #print "Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log"
+        os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"") 
+        rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
             print arg + ".........."+SUCCESS_MESSAGE + " ("+ workspace+arg.strip()+ ".log)"
