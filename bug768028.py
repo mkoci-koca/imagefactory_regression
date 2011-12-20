@@ -29,9 +29,6 @@
 import os
 import sys
 
-import oauth2 as oauth
-import httplib2
-import json
 #constants 
 SUCCESS=0
 FAILED=1
@@ -45,14 +42,6 @@ LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 TmpFile="deleteme_bug768028"
 CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + TmpFile
-consumer = oauth.Consumer(key='key', secret='secret')
-sig_method = oauth.SignatureMethod_HMAC_SHA1()
-params = {'oauth_version':"0.4.4",
-          'oauth_nonce':oauth.generate_nonce(),
-          'oauth_timestamp':oauth.generate_timestamp(),
-          'oauth_signature_method':sig_method.name,
-          'oauth_consumer_key':consumer.key}
-url_https="https://localhost:8075/imagefactory/builders/"
 
 def setupTest():
     print "=============================================="
@@ -74,17 +63,6 @@ def setupTest():
     print "Clearing log file for Image Warehouse"
     os.system("> " + LogFileIWH)
     return True
-
-#this functions suppose to be as a help function to do not write one code multiple times
-def helpTest(imageTest):
-    url = url_https + imageTest
-    req = oauth.Request(method='GET', url=url, parameters=params)
-    sig = sig_method.sign(req, consumer, None)
-    req['oauth_signature'] = sig
-    r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-    response = 'Response headers: %s\nContent: %s' % (r,c)
-    print response
-    return c
 
 #body
 def bodyTest():

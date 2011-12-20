@@ -74,6 +74,8 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
+    if os.path.isfile(TmpFile):
+        os.remove(TmpFile)    
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
