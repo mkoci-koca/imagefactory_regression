@@ -42,7 +42,7 @@ CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
 workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudForms/job/ImageFactory-KocaTesting2/ws/"
 return_value=INIT_VALUE
-final_message="=================================================\n"
+final_message="================================ REPORT ================================\n"
 
 os.system("date")
     
@@ -52,15 +52,15 @@ if len(sys.argv) > 1:
         rettmpvalue=os.system("python "+ arg + " >& " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
-            final_message =  final_message + arg + ".........." + SUCCESS_MESSAGE + " (" + workspace+arg.strip()+ ".log)"
+            final_message =  final_message + arg + ".........." + SUCCESS_MESSAGE + " (" + workspace+arg.strip()+ ".log)\n"
             if return_value == INIT_VALUE:
                 return_value = rettmpvalue
             elif return_value == FAILED:
                 return_value = SUCCESS_FAILED
                 
         elif rettmpvalue == RET_SETUPTEST:
-            final_message =  final_message + arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
-            final_message =  final_message + "The output of the error log is: "
+            final_message =  final_message + arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
+            final_message =  final_message + "The output of the error log is: \n"
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
@@ -69,8 +69,8 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_BODYTEST:
-            final_message =  final_message + arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
-            final_message =  final_message + "The output of the error log is: "
+            final_message =  final_message + arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
+            final_message =  final_message + "The output of the error log is: \n"
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
@@ -79,8 +79,8 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_CLEANTEST:
-            final_message =  final_message + arg + ".........."+CLEANTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
-            final_message =  final_message + "The output of the error log is: "
+            final_message =  final_message + arg + ".........."+CLEANTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
+            final_message =  final_message + "The output of the error log is: \n"
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
@@ -89,8 +89,8 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
-            final_message =  final_message + arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
-            final_message =  final_message + "The output of the error log is: "
+            final_message =  final_message + arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
+            final_message =  final_message + "The output of the error log is: \n"
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
@@ -99,8 +99,8 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         else:
-            final_message =  final_message + arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log"
-            final_message =  final_message + "The output of the error log is: "
+            final_message =  final_message + arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
+            final_message =  final_message + "The output of the error log is: \n"
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
