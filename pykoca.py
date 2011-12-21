@@ -49,8 +49,8 @@ summary_message_line="\n========================================================
 summary_message="\n"
 Failed_counter=0
 Success_counter=0
-html_header_refresh="<html><head><meta http-equiv=\"refresh\" content=\"5\"></head><body>"
-html_footer="</body></html>"
+html_header_refresh="<html><head><meta http-equiv=\"refresh\" content=\"5\"></head><body><pre>"
+html_footer="</pre></body></html>"
 
 os.system("date")
 if len(sys.argv) > 1:
