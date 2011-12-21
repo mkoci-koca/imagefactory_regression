@@ -64,14 +64,14 @@ temporaryfile = "deleteme_build_image"
 # Define an object to record test results
 class TestResult(object):
     def __init__(self, *args, **kwargs):
-        if len(args) == 5:
-            (self.distro, self.version, self.arch, self.installtype, self.isourlstr) = args
+        if len(args) == 6:
+            (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim) = args
         for k,v in kwargs.items():
             setattr(self, k, v)
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{4}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{4}-{5}".format(*self.test_args())
 
     @property
     def name(self):
@@ -79,27 +79,23 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
-        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr)
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim,)
 
     def execute(self):
-        print "we are in execute of the class testresult"
         if self.expect_pass:
-            print "we are in execute in if self.expect_pass statement"
             return (self.name, self.getTemplateRunTest(self.test_args()))
-            #return (self.name, self.getTemplateRunTest, self.test_args())
         else:
-            return (self.name, handle_exception, self.test_args())
+            return (self.name, handle_exception(self.test_args()))
         
     def getTemplateRunTest(self, args):
         global temporaryfile
-        print "we are in getTemplateRunTest function"
     #lets clean the logs so there is no obsolete records in it.     
         print "Clearing log file for Image Factory"
         os.system("> " + LogFileIF)
         print "Clearing log file for Image Warehouse"
         os.system("> " + LogFileIWH)
-        (distro, version, arch, installtype, isourlstr) = args
-        print "Testing %s-%s-%s-%s-%s..." % (distro, version, arch, installtype, isourlstr),
+        (distro, version, arch, installtype, isourlstr, targetim) = args
+        print "Testing %s-%s-%s-%s-%s-%s..." % (distro, version, arch, installtype, isourlstr, targetim),
     
         tdlxml = """
     <template>
@@ -120,7 +116,7 @@ class TestResult(object):
         print "======================================================"
         outputtmp = os.popen("cat "+temporaryfile).read()
         print outputtmp        
-        CrazyCommand = "aeolus-cli build --target rhevm --template " + temporaryfile
+        CrazyCommand = "aeolus-cli build --target %s --template " % targetim + temporaryfile
         target_image = ""
         try:
             print CrazyCommand
@@ -242,8 +238,8 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    expectSuccess("RHEL6", "1", "x86_64", "url", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/")
-    expectSuccess("RHEL6", "1", "x86_64", "iso", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso")
+    expectSuccess("RHEL6", "1", "x86_64", "url", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/", "rhevm")
+    expectSuccess("RHEL6", "1", "x86_64", "iso", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso", "rhevm")
     
     '''
     # bad distro
@@ -252,7 +248,8 @@ def bodyTest():
     expectFail("Fedora", "14", "i386", "dong")
     # bad arch
     expectFail("Fedora", "14", "ia64", "iso")
-    
+    '''
+    '''
     # FedoraCore
     for version in ["1", "2", "3", "4", "5", "6"]:
         for arch in ["i386", "x86_64"]:
