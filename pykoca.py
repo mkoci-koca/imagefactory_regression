@@ -56,7 +56,7 @@ os.system("date")
 if len(sys.argv) > 1:
     for arg in sys.argv[1:]:
         os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log.html\"")
-        os.system("echo " + html_header_refresh + " > " + arg.strip() + ".log.html") 
+        os.system("echo \"" + html_header_refresh + "\" > " + arg.strip() + ".log.html") 
         rettmpvalue=os.system("python "+ arg + " >>& " + arg.strip() + ".log.html")
         os.system("echo " + html_footer + " >> " + arg.strip() + ".log.html")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
