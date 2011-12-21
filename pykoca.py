@@ -62,7 +62,7 @@ if len(sys.argv) > 1:
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
             final_message =  final_message + "\n" + arg + ".........." + SUCCESS_MESSAGE + " (" + workspace+arg.strip()+ ".log.html)\n"
-            summary_message = summary_message + arg + ".........." + SUCCESS_MESSAGE 
+            summary_message = summary_message + arg + ".........." + SUCCESS_MESSAGE + "\n"
             Success_counter = Success_counter + 1
             if return_value == INIT_VALUE:
                 return_value = rettmpvalue
@@ -72,7 +72,7 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_SETUPTEST:
             final_message =  final_message + "\n" + arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
             final_message =  final_message + "The output of the error log is: \n"
-            summary_message = summary_message + arg + ".........."+SETUPTEST_MESSAGE
+            summary_message = summary_message + arg + ".........."+SETUPTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
@@ -84,7 +84,7 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_BODYTEST:
             final_message =  final_message + "\n" + arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
             final_message =  final_message + "The output of the error log is: \n"
-            summary_message = summary_message + arg + ".........."+BODYTEST_MESSAGE
+            summary_message = summary_message + arg + ".........."+BODYTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
@@ -96,7 +96,7 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_CLEANTEST:
             final_message =  final_message + "\n" + arg + ".........." + CLEANTEST_MESSAGE + " - See log file: "+workspace+arg.strip()+".log.html\n"
             final_message =  final_message + "The output of the error log is: \n"
-            summary_message = summary_message + arg + ".........." + CLEANTEST_MESSAGE
+            summary_message = summary_message + arg + ".........." + CLEANTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
@@ -108,7 +108,7 @@ if len(sys.argv) > 1:
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
             final_message =  final_message + "\n" + arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
             final_message =  final_message + "The output of the error log is: \n"
-            summary_message = summary_message + arg + ".........." + UNEXPECTED_ERROR_MESSAGE
+            summary_message = summary_message + arg + ".........." + UNEXPECTED_ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
@@ -120,7 +120,7 @@ if len(sys.argv) > 1:
         else:
             final_message =  final_message + "\n" + arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
             final_message =  final_message + "The output of the error log is: \n"
-            summary_message = summary_message + arg + ".........." + ERROR_MESSAGE
+            summary_message = summary_message + arg + ".........." + ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
             retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
