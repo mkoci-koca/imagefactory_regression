@@ -7,11 +7,11 @@
 bug689863.py  #1. aeolus-configure should no longer deploy /etc/init.d/iwhd and /etc/iwhd/conf.js
 bug693514.py  #2. aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
 bug709817.py  #3. iwhd initscript continues on in the face of failure
-#bug740592.py  #4. imagefactory needs rhevm.json in /etc/imagefactory now
+bug740592.py  #4. imagefactory needs rhevm.json in /etc/imagefactory now
 bug759988.py  #5. service iwhd fails to start - checking aeolus-check-services 
-#bug761035.py  #6. Build hangs when multiple providers specified
-#bug761163.py  #7. RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
+bug761035.py  #6. Build hangs when multiple providers specified
+bug761163.py  #7. RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
 bug745445.py  #8. Relevant message should be displayed while stopping iwhd
-#bug758687.py  #9. Wild char '&' in template will cause XML parse error
-#bug768028.py  #10.F16 doesn't build in Factory
-#bug761254.py  #11.Imagefactory only allows one image to be built 
+bug758687.py  #9. Wild char '&' in template will cause XML parse error
+bug768028.py  #10.F16 doesn't build in Factory
+bug761254.py  #11.Imagefactory only allows one image to be built 
