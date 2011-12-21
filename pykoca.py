@@ -74,7 +74,7 @@ if len(sys.argv) > 1:
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........."+SETUPTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -86,7 +86,7 @@ if len(sys.argv) > 1:
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........."+BODYTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -98,7 +98,7 @@ if len(sys.argv) > 1:
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + CLEANTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -110,7 +110,7 @@ if len(sys.argv) > 1:
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + UNEXPECTED_ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -122,7 +122,7 @@ if len(sys.argv) > 1:
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log").read()
+            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
