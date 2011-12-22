@@ -312,9 +312,9 @@ def bodyTest():
         for arch in ["i386", "x86_64"]:
             for installtype in ["url", "iso"]:
                 if installtype == "url":
-                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/"
+                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/os/" % arch
                 else:
-                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso"
+                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/iso/RHEL6.1-20110510.1-Server-%s-DVD1.iso" % (arch, arch)
                 expectSuccess("RHEL6", "1", arch, installtype, isourlstrvar , targetimage)
     
     '''
