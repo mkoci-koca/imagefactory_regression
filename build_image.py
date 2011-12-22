@@ -1,30 +1,29 @@
 #!/usr/bin/env python
-# encoding: utf-8
-#   Copyright 2011 Red Hat, Inc.
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
-#        Test that building images w/ the various parameters and templates
-#        Created by koca (mkoci@redhat.com)
-#        Date: 09/12/2011
-#        Modified: 09/12/2011
-#        Issue: https://tcms.engineering.redhat.com/case/122786/?from_plan=4953 
-# return values:
-# 0 - OK: everything OK
-# 1 - Fail: setupTest wasn't OK
-# 2 - Fail: bodyTest wasn't OK
-# 3 - Fail: cleanTest wasn't OK
-# 4 - Fail: any other error (reserved value)
+''' encoding: utf-8
+   Copyright 2011 Red Hat, Inc.
 
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+        Test that building images w/ the various parameters and templates using aeolus-cli tool
+        Created by koca (mkoci@redhat.com)
+        Date: 09/12/2011
+        Issue: https://tcms.engineering.redhat.com/case/122786/?from_plan=4953 
+ return values:
+ 0 - OK: everything OK
+ 1 - Fail: setupTest wasn't OK
+ 2 - Fail: bodyTest wasn't OK
+ 3 - Fail: cleanTest wasn't OK
+ 4 - Fail: any other error (reserved value)
+'''
 #necessary libraries
 import os
 import sys
@@ -47,12 +46,15 @@ MINUTE=60
 #setup
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
+tmplogfileIF="deletemeBuildImage.log"
 # Define a list to collect all tests
 alltests = list()
 results = list()
-#dirty get information
+#dirty information setup
 consumer = oauth.Consumer(key='key', secret='secret')
+#method
 sig_method = oauth.SignatureMethod_HMAC_SHA1()
+'''mandatory information'''
 params = {'oauth_version':"0.4.4",
           'oauth_nonce':oauth.generate_nonce(),
           'oauth_timestamp':oauth.generate_timestamp(),
@@ -63,6 +65,7 @@ temporaryfile = "deleteme_build_image"
 
 # Define an object to record test results
 class TestResult(object):
+    
     def __init__(self, *args, **kwargs):
         if len(args) == 6:
             (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim) = args
@@ -71,7 +74,7 @@ class TestResult(object):
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{4}-{5}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{5}-{4}".format(*self.test_args())
 
     @property
     def name(self):
@@ -79,24 +82,23 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
-        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim,)
-
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim)
+#main function to execute the test
     def execute(self):
         if self.expect_pass:
-            return (self.name, self.getTemplateRunTest(self.test_args()))
+            if self.methodCLI:
+                return (self.name, self.__runTestAeolusCLI(self.test_args()))
+            else:
+                return (self.name, self.__runTestImageFactory(self.test_args()))
         else:
-            return (self.name, handle_exception(self.test_args()))
+            if self.methodCLI:
+                return (self.name, self.handle_exception(self.test_args()))
+            else:
+                return (self.name, self.__runTestImageFactory(self.test_args()))
         
-    def getTemplateRunTest(self, args):
-        global temporaryfile
-    #lets clean the logs so there is no obsolete records in it.     
-        print "Clearing log file for Image Factory"
-        os.system("> " + LogFileIF)
-        print "Clearing log file for Image Warehouse"
-        os.system("> " + LogFileIWH)
+    def __getTemplate(self, *args):
         (distro, version, arch, installtype, isourlstr, targetim) = args
-        print "Testing %s-%s-%s-%s-%s-%s..." % (distro, version, arch, installtype, isourlstr, targetim),
-    
+        print "Testing %s-%s-%s-%s-%s-%s..." % (distro, version, arch, installtype, targetim, isourlstr),      
         tdlxml = """
     <template>
       <name>tester</name>
@@ -111,6 +113,69 @@ class TestResult(object):
       </os>
     </template>
     """ % (distro, version, arch, installtype, installtype, isourlstr, installtype)
+        return tdlxml
+        
+    def __runTestImageFactory(self, args):
+        global temporaryfile
+        (distro, version, arch, installtype, isourlstr, targetim) = args
+    #lets clean the logs so there is no obsolete records in it.     
+        print "Clearing log file for Image Factory"
+        os.system("> " + LogFileIF)
+        print "Clearing log file for Image Warehouse"
+        os.system("> " + LogFileIWH)
+        tdlxml = self.__getTemplate(distro, version, arch, installtype, isourlstr, targetim)
+        os.system("echo \""+tdlxml+"\" > "+temporaryfile)
+        print "See the testing template"
+        print "======================================================"
+        outputtmp = os.popen("cat "+temporaryfile).read()
+        print outputtmp        
+        CrazyCommand = "imagefactory --debug --target %s --template " % targetim + temporaryfile + " |& tee " + tmplogfileIF
+        try:
+            print CrazyCommand
+            retcode = os.popen(CrazyCommand).read()
+            print "output is :"
+            print retcode
+        except subprocess.CalledProcessError, e:
+            print >>sys.stderr, "Execution failed:", e
+            return False   
+            
+        print "Checking if there is any error in the log of image factory"
+        if os.system("grep -i \"FAILED\\|Error\" " + tmplogfileIF) == SUCCESS:
+            print "Found FAILED or error message in log file:"
+            outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + tmplogfileIF).read()
+            print outputtmp
+            print "See the output from log file " + LogFileIF + ":"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIF).read()
+            print outputtmp
+            print "See the output from log file " + LogFileIWH + ":"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIWH).read()
+            print outputtmp        
+            return False
+
+        if os.system("grep -i \"COMPLETE\" " + tmplogfileIF) != SUCCESS:
+            print "Build is not completed for some reason! It looks it stuck in the NEW status."
+            print "Perhaps you can find something in the log file " + tmplogfileIF + ":"
+            print "======================================================"
+            outputtmp = os.popen("cat " + tmplogfileIF).read()
+            print outputtmp
+            print "See the output from log file " + LogFileIF + " too:"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIF).read()
+            print outputtmp        
+            return False    
+        return True
+            
+    def __runTestAeolusCLI(self, args):
+        global temporaryfile
+        (distro, version, arch, installtype, isourlstr, targetim) = args
+    #lets clean the logs so there is no obsolete records in it.     
+        print "Clearing log file for Image Factory"
+        os.system("> " + LogFileIF)
+        print "Clearing log file for Image Warehouse"
+        os.system("> " + LogFileIWH)
+        tdlxml = self.__getTemplate(distro, version, arch, installtype, isourlstr, targetim)
         os.system("echo \""+tdlxml+"\" > "+temporaryfile)
         print "See the testing template"
         print "======================================================"
@@ -123,6 +188,7 @@ class TestResult(object):
             retcode = os.popen(CrazyCommand).read()
             print "output is :"
             print retcode
+            #get target image BEGIN
             tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
             if tempvar == None:
                 print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
@@ -132,15 +198,16 @@ class TestResult(object):
                 return False
             else:
                 target_image = tempvar.group(1)
+            #get target image END
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
-        print "wait until build process is done"
-        #setup counter to do not wait longer then 1 hour
-        Counter=0            
-    
+        
+        #setup counter to do not wait longer then 1 hour        
+        print "Wait until build process is done"
+        Counter=0                
         print "Let\'s check this image: " + target_image
-        data = json.loads(helpTest(target_image))
+        data = json.loads(self.__helpTest(target_image))
         print "Data Status: " + data['status']
         #while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
         while data['status'] == "BUILDING":
@@ -152,7 +219,7 @@ class TestResult(object):
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
                 return False
             
-        print "Checking if there is any error in erro log of image factory"
+        print "Checking if there is any error in the log of image factory"
         if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
             print "Found FAILED or error message in log file:"
             outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
@@ -166,9 +233,10 @@ class TestResult(object):
             outputtmp = os.popen("cat " + LogFileIWH).read()
             print outputtmp        
             return False
+        
     #check if status is either complete or building
         print "Let\'s check this image: " + target_image
-        data = json.loads(helpTest(target_image))
+        data = json.loads(self.__helpTest(target_image))
         print "Data Status for image "+target_image+": " + data['status']
         if data['status'] != "COMPLETED":
             print "Build "+target_image+" is not completed for some reason! It looks it stuck in the NEW status."
@@ -182,35 +250,37 @@ class TestResult(object):
             print outputtmp        
             return False    
         return True
-
+    
+    def handle_exception(self, args):
+        try:
+            self.getTemplateRunTest(args)
+        except:
+            print "(Un)expected error:", sys.exc_info()[0]
+            raise
+    
 #this functions suppose to be as a help function to do not write one code multiple times
-def helpTest(imageTest):
-    url = url_https + imageTest
-    req = oauth.Request(method='GET', url=url, parameters=params)
-    sig = sig_method.sign(req, consumer, None)
-    req['oauth_signature'] = sig
-    r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-    response = 'Response headers: %s\nContent: %s' % (r,c)
-    print response
-    return c
+    def __helpTest(self, imageTest):
+        url = url_https + imageTest
+        req = oauth.Request(method='GET', url=url, parameters=params)
+        sig = sig_method.sign(req, consumer, None)
+        req['oauth_signature'] = sig
+        r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
+        response = 'Response headers: %s\nContent: %s' % (r,c)
+        print response
+        return c
 
-def handle_exception(args):
-    try:
-        getTemplateRunTest(args)
-    except:
-        print "(Un)expected error:", sys.exc_info()[0]
-        raise
+
 
 def expectSuccess(*args):
     '''Create a TestResult object using provided arguments.  Append result to global 'alltests' list.'''
     global alltests
-    alltests.append(TestResult(*args, expect_pass=True))
+    alltests.append(TestResult(*args, expect_pass=True, methodCLI=False))
     
 def expectFail(*args):
     '''Create a TestResult object using provided arguments.  Append result to
     global 'alltests' list.'''
     global alltests
-    alltests.append(TestResult(*args, expect_pass=False))
+    alltests.append(TestResult(*args, expect_pass=False, methodCLI=True))
     
 def setupTest():
     print "=============================================="
@@ -220,13 +290,13 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-   # print "Cleanup configuration...."
-   # if os.system("aeolus-cleanup") != SUCCESS:
-   #     print "Some error raised in aeolus-cleanup !"
-   # print "Running aeolus-configure....."
-   # if os.system("aeolus-configure") != SUCCESS:
-   #     print "Some error raised in aeolus-configure !"
-   #     return False
+    print "Cleanup configuration...."
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
+    print "Running aeolus-configure....."
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
 #    print "Clearing log file for Image Factory"
 #    os.system("> " + LogFileIF)
 #    print "Clearing log file for Image Warehouse"
@@ -238,7 +308,7 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    expectSuccess("RHEL6", "1", "x86_64", "url", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/", "rhevm")
+    expectSuccess("RHEL6", "1", "x86_64", "url", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/", "ec2")
     expectSuccess("RHEL6", "1", "x86_64", "iso", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso", "rhevm")
     
     '''
