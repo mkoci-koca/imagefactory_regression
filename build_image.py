@@ -308,8 +308,14 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    expectSuccess("RHEL6", "1", "x86_64", "url", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/", "ec2")
-    expectSuccess("RHEL6", "1", "x86_64", "iso", "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso", "rhevm")
+    for targetimage in ["ec2", "rhevm"]:
+        for arch in ["i386", "x86_64"]:
+            for installtype in ["url", "iso"]:
+                if installtype == "url":
+                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/"
+                else:
+                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso"
+                expectSuccess("RHEL6", "1", arch, installtype, isourlstrvar , targetimage)
     
     '''
     # bad distro
@@ -453,8 +459,7 @@ def bodyTest():
 #cleanup after test
 def cleanTest():
     global temporaryfile
-    print "=============================================="
-    print "Cleaning the mess after test"    
+    print "============================================== Cleaning the mess after test =============================================="   
     if os.path.isfile(temporaryfile):
         if not os.remove(temporaryfile):
             return False    
@@ -463,8 +468,6 @@ def cleanTest():
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
-
-
 if setupTest(): 
     if bodyTest():
         if cleanTest():

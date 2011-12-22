@@ -16,7 +16,7 @@
 #        Frontend for tests. Returns nice-looking output for given list of tests
 #        Created by koca (mkoci@redhat.com)
 #        Date: 20/12/2011
-
+#
 #load libraries
 import sys
 import os
@@ -47,21 +47,21 @@ return_value=INIT_VALUE
 final_message="\n================================================================ REPORT ================================================================\n"
 summary_message_line="\n================================================================ SUMMARY ================================================================\n"
 summary_message="\n"
-Failed_counter=0
-Success_counter=0
-html_header_refresh="<html><head><meta http-equiv=\"refresh\" content=\"5\"></head><body><pre>"
-html_footer="</pre></body></html>"
+Failed_counter=0 #how many tests failed
+Success_counter=0 #how many tests succeed
+html_header_refresh=""#"<html><head><meta http-equiv=\"refresh\" content=\"5\"></head><body><pre>"
+html_footer=""#"</pre></body></html>"
 
 os.system("date")
 if len(sys.argv) > 1:
     for arg in sys.argv[1:]:
-        os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log.html\"")
-        os.system("echo \"" + html_header_refresh + "\" > " + arg.strip() + ".log.html") 
-        rettmpvalue=os.system("python "+ arg + " &>> " + arg.strip() + ".log.html")
-        os.system("echo \"" + html_footer + "\" >> " + arg.strip() + ".log.html")
+        os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"")
+        os.system("echo \"" + html_header_refresh + "\" > " + arg.strip() + ".log") 
+        rettmpvalue=os.system("python "+ arg + " &>> " + arg.strip() + ".log")
+        os.system("echo \"" + html_footer + "\" >> " + arg.strip() + ".log")
         rettmpvalue=rettmpvalue >> 8 #necessary conversion to Unix readable return values
         if rettmpvalue == SUCCESS:
-            final_message =  final_message + "\n" + arg + ".........." + SUCCESS_MESSAGE + " (" + workspace+arg.strip()+ ".log.html)\n"
+            final_message =  final_message + "\n" + arg + ".........." + SUCCESS_MESSAGE + " (" + workspace+arg.strip()+ ".log)\n"
             summary_message = summary_message + arg + ".........." + SUCCESS_MESSAGE + "\n"
             Success_counter = Success_counter + 1
             if return_value == INIT_VALUE:
@@ -70,11 +70,11 @@ if len(sys.argv) > 1:
                 return_value = SUCCESS_FAILED
                 
         elif rettmpvalue == RET_SETUPTEST:
-            final_message =  final_message + "\n" + arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
+            final_message =  final_message + "\n" + arg + ".........."+SETUPTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........."+SETUPTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -82,11 +82,11 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_BODYTEST:
-            final_message =  final_message + "\n" + arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
+            final_message =  final_message + "\n" + arg + ".........."+BODYTEST_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........."+BODYTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -94,11 +94,11 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_CLEANTEST:
-            final_message =  final_message + "\n" + arg + ".........." + CLEANTEST_MESSAGE + " - See log file: "+workspace+arg.strip()+".log.html\n"
+            final_message =  final_message + "\n" + arg + ".........." + CLEANTEST_MESSAGE + " - See log file: "+workspace+arg.strip()+".log\n"
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + CLEANTEST_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -106,11 +106,11 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         elif rettmpvalue == RET_UNEXPECTED_ERROR:
-            final_message =  final_message + "\n" + arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
+            final_message =  final_message + "\n" + arg + ".........."+UNEXPECTED_ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + UNEXPECTED_ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
@@ -118,11 +118,11 @@ if len(sys.argv) > 1:
                 return_value = FAILED
                 
         else:
-            final_message =  final_message + "\n" + arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log.html\n"
+            final_message =  final_message + "\n" + arg + ".........."+ERROR_MESSAGE+" - See log file: "+workspace+arg.strip()+".log\n"
             final_message =  final_message + "The output of the error log is: \n"
             summary_message = summary_message + arg + ".........." + ERROR_MESSAGE + "\n"
             Failed_counter = Failed_counter + 1
-            retcode = os.popen("cat " + arg.strip() + ".log.html").read()
+            retcode = os.popen("cat " + arg.strip() + ".log").read()
             final_message =  final_message + retcode
             if return_value == SUCCESS:
                 return_value = SUCCESS_FAILED
