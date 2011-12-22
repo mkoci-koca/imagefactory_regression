@@ -308,7 +308,7 @@ def setupTest():
 def bodyTest():
     print "=============================================="
     print "test being started"
-    for targetimage in ["ec2", "rhevm"]:
+    for targetimage in ["ec2", "rhevm", "mock", "vsphere", "condorcloud"]:
         for arch in ["i386", "x86_64"]:
             for installtype in ["url", "iso"]:
                 if installtype == "url":
