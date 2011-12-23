@@ -63,11 +63,11 @@ params = {'oauth_version':"0.4.4",
 url_https="https://localhost:8075/imagefactory/builders/"
 temporaryfile = "deleteme_build_image"
 templatesetupvar = ["""<packages>
-    <package name=\"httpd\"/>
-    <package name=\"php\"/>
+    <package name='httpd'/>
+    <package name='php'/>
   </packages>
 """, """<files>
-    <file name=\"/var/www/html/index.html\" type=\"raw\">
+    <file name='/var/www/html/index.html' type='raw'>
       Aeolus Cloud Test page on Build Created for Mumbai Westford  Private RHEV Cloud
     </file>
   </files>""", """
