@@ -62,18 +62,15 @@ params = {'oauth_version':"0.4.4",
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
 temporaryfile = "deleteme_build_image"
-templatesetupvar = ["""
-  <packages>
-    <package name="httpd"/>
-    <package name="php"/>
+templatesetupvar = ["""<packages>
+    <package name=\"httpd\"/>
+    <package name=\"php\"/>
   </packages>
-""", """
-  <files>
-    <file name="/var/www/html/index.html" type="raw">
+""", """<files>
+    <file name=\"/var/www/html/index.html\" type=\"raw\">
       Aeolus Cloud Test page on Build Created for Mumbai Westford  Private RHEV Cloud
     </file>
-  </files>
-""", """
+  </files>""", """
 """]
 
 # Define an object to record test results
@@ -289,7 +286,9 @@ class TestResult(object):
 def expectSuccess(*args):
     '''Create a TestResult object using provided arguments.  Append result to global 'alltests' list.'''
     global alltests
+    '''Run build via imagefactory command''' 
     alltests.append(TestResult(*args, expect_pass=True, methodCLI=False))
+    '''Run build via aeolus-cli command'''
     alltests.append(TestResult(*args, expect_pass=True, methodCLI=True))
     
 def expectFail(*args):
