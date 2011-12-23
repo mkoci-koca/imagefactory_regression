@@ -62,13 +62,26 @@ params = {'oauth_version':"0.4.4",
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
 temporaryfile = "deleteme_build_image"
+templatesetupvar = ["""
+  <packages>
+    <package name="httpd"/>
+    <package name="php"/>
+  </packages>
+""", """
+  <files>
+    <file name="/var/www/html/index.html" type="raw">
+      Aeolus Cloud Test page on Build Created for Mumbai Westford  Private RHEV Cloud
+    </file>
+  </files>
+""", """
+"""]
 
 # Define an object to record test results
 class TestResult(object):
     
     def __init__(self, *args, **kwargs):
-        if len(args) == 6:
-            (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim) = args
+        if len(args) == 7:
+            (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup) = args
         for k,v in kwargs.items():
             setattr(self, k, v)
 
@@ -82,7 +95,7 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
-        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim)
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup)
 #main function to execute the test
     def execute(self):
         if self.expect_pass:
@@ -97,7 +110,7 @@ class TestResult(object):
                 return (self.name, self.__runTestImageFactory(self.test_args()))
         
     def __getTemplate(self, *args):
-        (distro, version, arch, installtype, isourlstr, targetim) = args
+        (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
         print "Testing %s-%s-%s-%s-%s-%s..." % (distro, version, arch, installtype, targetim, isourlstr),      
         tdlxml = """
     <template>
@@ -112,18 +125,19 @@ class TestResult(object):
         <rootpw>redhat</rootpw>
       </os>
     </template>
-    """ % (distro, version, arch, installtype, installtype, isourlstr, installtype)
+    %s
+    """ % (distro, version, arch, installtype, installtype, isourlstr, installtype, templatesetup)
         return tdlxml
         
     def __runTestImageFactory(self, args):
         global temporaryfile
-        (distro, version, arch, installtype, isourlstr, targetim) = args
+        (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
     #lets clean the logs so there is no obsolete records in it.     
         print "Clearing log file for Image Factory"
         os.system("> " + LogFileIF)
         print "Clearing log file for Image Warehouse"
         os.system("> " + LogFileIWH)
-        tdlxml = self.__getTemplate(distro, version, arch, installtype, isourlstr, targetim)
+        tdlxml = self.__getTemplate(distro, version, arch, installtype, isourlstr, targetim, templatesetup)
         os.system("echo \""+tdlxml+"\" > "+temporaryfile)
         print "See the testing template"
         print "======================================================"
@@ -275,6 +289,7 @@ def expectSuccess(*args):
     '''Create a TestResult object using provided arguments.  Append result to global 'alltests' list.'''
     global alltests
     alltests.append(TestResult(*args, expect_pass=True, methodCLI=False))
+    alltests.append(TestResult(*args, expect_pass=True, methodCLI=True))
     
 def expectFail(*args):
     '''Create a TestResult object using provided arguments.  Append result to
@@ -291,31 +306,36 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     print "Cleanup configuration...."
+
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
     print "Running aeolus-configure....."
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
-#    print "Clearing log file for Image Factory"
-#    os.system("> " + LogFileIF)
-#    print "Clearing log file for Image Warehouse"
-#    os.system("> " + LogFileIWH)
-    return True
 
-#body
+    return True    
+'''
+    print "Clearing log file for Image Factory"
+    os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
+'''
 
+#body of the test
 def bodyTest():
+    global templatesetupvar
     print "=============================================="
     print "test being started"
-    for targetimage in ["ec2", "rhevm", "mock", "vsphere", "condorcloud"]:
-        for arch in ["i386", "x86_64"]:
-            for installtype in ["url", "iso"]:
-                if installtype == "url":
-                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/os/" % arch
-                else:
-                    isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/iso/RHEL6.1-20110510.1-Server-%s-DVD1.iso" % (arch, arch)
-                expectSuccess("RHEL6", "1", arch, installtype, isourlstrvar , targetimage)
+    for templatesetup in templatesetupvar:
+        for targetimage in ["ec2", "rhevm", "mock", "vsphere", "condorcloud"]:
+            for arch in ["i386", "x86_64"]:
+                for installtype in ["url", "iso"]:
+                    if installtype == "url":
+                        isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/os/" % arch
+                    else:
+                        isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/iso/RHEL6.1-20110510.1-Server-%s-DVD1.iso" % (arch, arch)
+                    expectSuccess("RHEL6", "1", arch, installtype, isourlstrvar , targetimage, templatesetup)
     
     '''
     # bad distro
@@ -439,9 +459,6 @@ def bodyTest():
     # bad Ubuntu installtype
     expect_fail("Ubuntu", "10.10", "i386", "url")
     
-    # Now run all the tests
-    print "DEbug 01"
-    print str(tempcatch)
     '''
     for onetest in alltests:
         results.append(onetest.execute())
@@ -462,6 +479,9 @@ def cleanTest():
     print "============================================== Cleaning the mess after test =============================================="   
     if os.path.isfile(temporaryfile):
         if not os.remove(temporaryfile):
+            return False
+    if os.path.isfile(tmplogfileIF):
+        if not os.remove(tmplogfileIF):
             return False    
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     #TODO: need to create correct cleanup 
