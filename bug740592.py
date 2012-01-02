@@ -56,11 +56,17 @@ def setupTest():
         return False #exit the test
     
     #first backup old rhvm file
-    shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
     
-    #first copy the conf. file
-    print "copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm"
-    shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False
     
     #rename rhevm.json file ir exists
     if os.path.isfile(ExpectedFile02):
