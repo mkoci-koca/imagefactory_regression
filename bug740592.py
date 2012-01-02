@@ -55,6 +55,11 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
+        
     #first backup old rhvm file
     print "Backup old rhevm configuration file"
     if os.path.isfile(RHEVMconfigureFile):
@@ -71,11 +76,6 @@ def setupTest():
     #rename rhevm.json file ir exists
     if os.path.isfile(ExpectedFile02):
         os.remove(ExpectedFile02)
-        
-    #run the cleanup configuration
-    print "Cleanup configuration...." 
-    if os.system("aeolus-cleanup") != SUCCESS:
-        print "Some error raised in aeolus-cleanup !"
         
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
     print "running aeolus-configure -p rhevm"
