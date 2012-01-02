@@ -46,7 +46,6 @@ MINUTE=60
 #setup
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
-tmplogfileIF="deletemeBuildImage.log"
 # Define a list to collect all tests
 alltests = list()
 results = list()
@@ -62,16 +61,18 @@ params = {'oauth_version':"0.4.4",
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
 temporaryfile = "deleteme_build_image"
+tmplogfileIF = "deletemeBuildImage.log"
 templatesetupvar = ["""<packages>
-    <package name='httpd'/>
-    <package name='php'/>
-  </packages>
+        <package name='httpd'/>
+        <package name='php'/>
+      </packages>
 """, """<files>
-    <file name='/var/www/html/index.html' type='raw'>
-      Aeolus Cloud Test page on Build Created for Mumbai Westford  Private RHEV Cloud
-    </file>
-  </files>""", """
-"""]
+        <file name='/var/www/html/index.html' type='raw'>
+          Aeolus Cloud Test page on Build Created
+        </file>
+      </files>""", """"""]
+architectures=["i386", "x86_64"]
+targetimages=["ec2", "rhevm", "mock", "vsphere", "condorcloud"]
 
 # Define an object to record test results
 class TestResult(object):
@@ -84,7 +85,7 @@ class TestResult(object):
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{5}-{4}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{5}-{4}-additional template:{6}".format(*self.test_args())
 
     @property
     def name(self):
@@ -122,13 +123,13 @@ class TestResult(object):
         <rootpw>redhat</rootpw>
       </os>
       %s
-    </template>
-    
+    </template>  
     """ % (distro, version, arch, installtype, installtype, isourlstr, installtype, templatesetup)
         return tdlxml
         
     def __runTestImageFactory(self, args):
         global temporaryfile
+        global tmplogfileIF
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
     #lets clean the logs so there is no obsolete records in it.     
         print "Clearing log file for Image Factory"
@@ -163,7 +164,8 @@ class TestResult(object):
             print "See the output from log file " + LogFileIWH + ":"
             print "======================================================"
             outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp        
+            print outputtmp 
+            print "Test FAILED =============================================================="       
             return False
 
         if os.system("grep -i \"COMPLETE\" " + tmplogfileIF) != SUCCESS:
@@ -175,7 +177,8 @@ class TestResult(object):
             print "See the output from log file " + LogFileIF + " too:"
             print "======================================================"
             outputtmp = os.popen("cat " + LogFileIF).read()
-            print outputtmp        
+            print outputtmp    
+            print "Test FAILED =============================================================="    
             return False    
         return True
             
@@ -207,6 +210,7 @@ class TestResult(object):
                 print "======================================================"
                 outputtmp = os.popen("cat " + LogFileIF).read()
                 print outputtmp
+                print "Test FAILED =============================================================="
                 return False
             else:
                 target_image = tempvar.group(1)
@@ -229,6 +233,7 @@ class TestResult(object):
             #after an hour break the 
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
+                print "Test FAILED =============================================================="
                 return False
             
         print "Checking if there is any error in the log of image factory"
@@ -243,7 +248,8 @@ class TestResult(object):
             print "See the output from log file " + LogFileIWH + ":"
             print "======================================================"
             outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp        
+            print outputtmp   
+            print "Test FAILED =============================================================="     
             return False
         
     #check if status is either complete or building
@@ -259,7 +265,8 @@ class TestResult(object):
             print "See the output from log file " + LogFileIWH + " too:"
             print "======================================================"
             outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp        
+            print outputtmp  
+            print "Test FAILED =============================================================="      
             return False    
         return True
     
@@ -313,14 +320,14 @@ def setupTest():
     if os.system("aeolus-configure") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
-
-    return True    
-'''
+    
     print "Clearing log file for Image Factory"
     os.system("> " + LogFileIF)
     print "Clearing log file for Image Warehouse"
     os.system("> " + LogFileIWH)
-'''
+    
+    return True    
+
 
 #body of the test
 def bodyTest():
@@ -328,8 +335,8 @@ def bodyTest():
     print "=============================================="
     print "test being started"
     for templatesetup in templatesetupvar:
-        for targetimage in ["ec2", "rhevm", "mock", "vsphere", "condorcloud"]:
-            for arch in ["i386", "x86_64"]:
+        for targetimage in targetimages:
+            for arch in architectures:
                 for installtype in ["url", "iso"]:
                     if installtype == "url":
                         isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/os/" % arch
@@ -353,16 +360,16 @@ def bodyTest():
 #cleanup after test
 def cleanTest():
     global temporaryfile
+    global tmplogfileIF
     print "============================================== Cleaning the mess after test =============================================="   
+    print "Removing temporary files"
     if os.path.isfile(temporaryfile):
-        if not os.remove(temporaryfile):
-            return False
+        os.remove(temporaryfile)
     if os.path.isfile(tmplogfileIF):
-        if not os.remove(tmplogfileIF):
-            return False    
-    #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
-    #TODO: need to create correct cleanup 
-    return True
+        os.remove(tmplogfileIF)
+    return True    
+#future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
+#TODO: need to create correct cleanup 
  
 #execute the tests and return value (can be saved as a draft for future tests)
 if setupTest(): 
@@ -378,7 +385,8 @@ if setupTest():
     else:
         print "=============================================="
         print "Test Failed !"
-        cleanTest()
+        if not cleanTest():
+            print "Even cleaning after body test wasn't sort of successful !"
         sys.exit(RET_BODYTEST)
 else:
     print "=============================================="
