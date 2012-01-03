@@ -1,5 +1,5 @@
 <template>
-  <name>Target_Specific_Packages_and_Repos_for_RHEL</name>
+  <name>TSPaR_RHEL</name>
   <description>Target Specific Packages and Repos for RHEL</description>
   <os>
     <name>RHEL-6</name>
