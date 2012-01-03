@@ -64,7 +64,7 @@ templateRHEVM="templates/tspar_rhevm.tdl"
 targets_list=["ec2", "rhevm"]
 templates={"ec2" : templateEC2, "rhevm" : templateRHEVM}
 for target in targets_list:
-    crazyCommand_list.append("imagefactory --debug --target %s --templates %s" % (target, templates[target]) + " |& tee " + tmplogfileIF) 
+    crazyCommand_list.append("imagefactory --debug --target %s --template %s" % (target, templates[target]) + " |& tee " + tmplogfileIF) 
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 #constants 
@@ -84,12 +84,12 @@ def setupTest():
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
     print "Cleanup configuration...."
-#    if os.system("aeolus-cleanup") != SUCCESS:
-#        print "Some error raised in aeolus-cleanup !"
-#    print "Running aeolus-configure....."
-#    if os.system("aeolus-configure") != SUCCESS:
-#        print "Some error raised in aeolus-configure !"
-#        return False
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
+    print "Running aeolus-configure....."
+    if os.system("aeolus-configure") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
     print "Creating the " + target_content_file + " file"
     os.system("echo \"" + target_template + "\" > " + target_content_file)
     if not os.path.isfile(target_content_file):
