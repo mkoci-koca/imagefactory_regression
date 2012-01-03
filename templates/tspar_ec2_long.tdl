@@ -1,0 +1,17 @@
+<template>
+  <name>Target Specific Packages and Repos for Fedora_14 long</name>
+  <os>
+    <name>Fedora</name>
+    <version>14</version>
+    <arch>x86_64</arch>
+    <rootpw>password</rootpw>
+    <install type='url'>
+      <url>http://ftp.linux.cz/pub/linux/fedora/linux/releases/14/Fedora/x86_64/os/</url>
+    </install>
+  </os>
+  <packages>
+    <package name="oz"/>
+  </packages>
+  <description>Fedora 14 target specific package and repository</description>
+</template>
+

@@ -1,0 +1,16 @@
+<template>
+  <name>Target Specific Packages and Repos for RHEL long</name>
+  <description>Target Specific Packages and Repos for RHEL</description>
+  <os>
+    <name>RHEL-6</name>
+    <version>1</version>
+    <arch>x86_64</arch>
+    <install type="url">
+      <url>http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/</url>
+    </install>
+    <rootpw>redhat</rootpw>
+  </os>
+  <packages>
+    <package name="rhev-fedora-generic-package"/>
+  </packages>
+</template>

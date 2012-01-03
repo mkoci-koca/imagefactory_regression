@@ -60,11 +60,14 @@ target_template="""<template_includes>
 tmplogfileIF = "deletemeBuildImage.log"
 crazyCommand_list=list()
 templateEC2="templates/tspar_ec2.tdl"
+templateEC2long="templates/tspar_ec2_long.tdl"
 templateRHEVM="templates/tspar_rhevm.tdl"
+templateRHEVMlong="templates/tspar_rhevm_long.tdl"
 targets_list=["ec2", "rhevm"]
-templates={"ec2" : templateEC2, "rhevm" : templateRHEVM}
-for target in targets_list:
-    crazyCommand_list.append("imagefactory --debug --target %s --template %s" % (target, templates[target]) + " |& tee " + tmplogfileIF) 
+templates=[{"ec2" : templateEC2, "rhevm" : templateRHEVM},{"ec2" : templateEC2long, "rhevm" : templateRHEVMlong}]
+for template_item in templates:
+    for target in targets_list:
+        crazyCommand_list.append("imagefactory --debug --target %s --template %s" % (target, template_item[target]) + " |& tee " + tmplogfileIF) 
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 #constants 
