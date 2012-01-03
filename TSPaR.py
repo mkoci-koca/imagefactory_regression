@@ -108,7 +108,7 @@ def setupTest():
 def bodyTest():      
     for item in crazyCommand_list:  
         try:
-            print item
+            print "\n============== " + item + " =============================================================================\n"
             retcode = os.popen(item).read()
             print "output is :"
             print retcode
