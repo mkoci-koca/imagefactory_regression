@@ -1,5 +1,5 @@
 <template>
-  <name>Target Specific Packages and Repos for Fedora 14</name>
+  <name>Target_Specific_Packages_and_Repos_for_Fedora_14</name>
   <os>
     <name>Fedora</name>
     <version>14</version>
