@@ -43,7 +43,7 @@ ROOTID=0
 #setup
 ExpectedFile01="/etc/imagefactory/vsphere.json"
 ExpectedFile02="/etc/imagefactory/rhevm.json"
-RHEVMbugFile="imagefactory/rhevm740592"
+RHEVMbugFile="imagefactory/rhevm"
 RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
 RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
 
