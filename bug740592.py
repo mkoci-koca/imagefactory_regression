@@ -44,8 +44,8 @@ ROOTID=0
 ExpectedFile01="/etc/imagefactory/vsphere.json"
 ExpectedFile02="/etc/imagefactory/rhevm.json"
 RHEVMbugFile="imagefactory/rhevm740592"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm.bck"
+RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
+RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
 
 def setupTest():
     print "=============================================="
