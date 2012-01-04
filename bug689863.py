@@ -28,7 +28,6 @@
 #necessary libraries
 import os
 import sys
-import shutil
 
 #constants 
 SUCCESS=0
@@ -42,12 +41,6 @@ ROOTID=0
 file01="/etc/init.d/iwhd"
 file02="/etc/iwhd/conf.js"
 Output=""
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
-VSPHEREbugFile="imagefactory/vsphere"
-VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
-VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
 
 def setupTest():
     print "=============================================="
@@ -62,33 +55,9 @@ def setupTest():
     print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-            
-    #first backup old rhvm file
-    print "Backup old rhevm configuration file"
-    if os.path.isfile(RHEVMconfigureFile):
-        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
-    #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
-    if os.path.isfile(RHEVMbugFile):
-        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
-    else:
-        print RHEVMbugFile + " didn't find!"
-        return False
-    
-    #first backup old vsphere file
-    print "Backup old vsphere configuration file"
-    if os.path.isfile(VSPHEREconfigureFile):
-        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
-    #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
-    if os.path.isfile(VSPHEREbugFile):
-        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
-    else:
-        print VSPHEREbugFile + " didn't find!"
-        return False
-    
-    print "running aeolus-configure -p ec2,mock,vsphere,rhevm"
-    if os.system("aeolus-configure -p ec2,mock,vsphere,rhevm") != SUCCESS:
+   
+    print "running aeolus-configure -p ec2"
+    if os.system("aeolus-configure -p ec2") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     return True
@@ -110,12 +79,6 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
-    if os.path.isfile(RHEVMBackupFile):
-        #copy file back rhevm
-        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
-    if os.path.isfile(VSPHEREBackupFile):
-        #copy file back VSPHERE
-        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile)    
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
