@@ -105,14 +105,14 @@ class TestResult(object):
     def execute(self):
         if self.expect_pass:
             if self.methodCLI:
-                return (self.name, self.__runTestAeolusCLI(self.test_args()))
+                return (self.name, self.__runTestAeolusCLI(self.test_args()), "#aeolus-cli")
             else:
-                return (self.name, self.__runTestImageFactory(self.test_args()))
+                return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
         else:
             if self.methodCLI:
-                return (self.name, self.handle_exception(self.test_args()))
+                return (self.name, self.handle_exception(self.test_args()), "#aeolus-cli")
             else:
-                return (self.name, self.__runTestImageFactory(self.test_args()))
+                return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
         
     def __getTemplate(self, *args):
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
@@ -383,9 +383,9 @@ def bodyTest():
     for result in results:
         if result[1] == False:
             returnvalue = False
-            print "FAILED ...."+result[0]
+            print "FAILED ...."+result[2]+": "+result[0]
         else:
-            print "Passed ...."+result[0]        
+            print "Passed ...."+result[2]+": "+result[0]       
     print "==================================================================================================================================="
     return returnvalue
  
