@@ -33,6 +33,7 @@ import httplib2
 import json
 import re
 import time
+import shutil
 #constants 
 SUCCESS=0
 FAILED=1
@@ -72,7 +73,13 @@ templatesetupvar = ["""<packages>
         </file>
       </files>""", """"""]
 architectures=["i386", "x86_64"]
-targetimages=["ec2", "rhevm", "mock", "vsphere", "condorcloud"]
+targetimages=["ec2", "rhevm", "mock", "vsphere"]
+RHEVMbugFile="imagefactory/rhevm"
+RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
+RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
+VSPHEREbugFile="imagefactory/vsphere"
+VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
+VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
 
 # Define an object to record test results
 class TestResult(object):
@@ -312,12 +319,37 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "Cleanup configuration...."
-
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
+            
+    #first backup old rhvm file
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False
+    
+    #first backup old vsphere file
+    print "Backup old vsphere configuration file"
+    if os.path.isfile(VSPHEREconfigureFile):
+        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
+    if os.path.isfile(VSPHEREbugFile):
+        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
+    else:
+        print VSPHEREbugFile + " didn't find!"
+        return False
+    
+    print "running aeolus-configure -p ec2,vsphere,rhevm,mock"
+    if os.system("aeolus-configure -p ec2,vsphere,rhevm,mock") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     
@@ -367,6 +399,12 @@ def cleanTest():
         os.remove(temporaryfile)
     if os.path.isfile(tmplogfileIF):
         os.remove(tmplogfileIF)
+    if os.path.isfile(RHEVMBackupFile):
+        #copy file back rhevm
+        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
+    if os.path.isfile(VSPHEREBackupFile):
+        #copy file back VSPHERE
+        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile)   
     return True    
 #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
 #TODO: need to create correct cleanup 
