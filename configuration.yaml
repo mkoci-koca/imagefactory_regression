@@ -1,0 +1,8 @@
+RHEVMbugFile: "imagefactory/rhevm"
+RHEVMconfigureFile: "/etc/aeolus-configure/nodes/rhevm_configure"
+RHEVMBackupFile: "/etc/aeolus-configure/nodes/rhevm_configure.bck"
+VSPHEREbugFile: "imagefactory/vsphere"
+VSPHEREbug755029File: "imagefactory/vsphere_bug755029"
+VSPHEREconfigureFile: "/etc/aeolus-configure/nodes/vsphere_configure"
+VSPHEREBackupFile: "/etc/aeolus-configure/nodes/vshpere_configure.bck"
+

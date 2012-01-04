@@ -13,10 +13,10 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug761035
+#        Regression test for Image Factory Bug 755029 
 #        Created by koca (mkoci@redhat.com)
-#        Date: 13/12/2011
-#        Issue: Build hangs when multiple providers specified 
+#        Date: 04/01/2011
+#        Issue: aeolus-cli push displays provider account passwd 
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -24,13 +24,15 @@
 # 3 - Fail: cleanTest wasn't OK
 # 4 - Fail: any other error (reserved value)
 
+
 #necessary libraries
 import os
 import sys
-import time
-import subprocess
-import re
 import shutil
+from syck import *
+import re
+import subprocess
+import time
 
 #constants 
 SUCCESS=0
@@ -41,56 +43,47 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=180
-#setup variables, constants
-CrazyCommand=["aeolus-cli build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
+#setup
+configuration = load(file("configuration.yaml", 'r').read())
+
+#load configuration from a file
+VSPHEREbug755029File=configuration["VSPHEREbug755029File"]
+password_yaml = load(file(VSPHEREbug755029File, 'r').read())
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
+CrazyCommand="aeolus-cli build --target vsphere --template templates/bug761035.tdl;"
 LogFile="/var/log/imagefactory.log"
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
-VSPHEREbugFile="imagefactory/vsphere"
-VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
-VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
+target_image=""
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug761035 - Build hangs when multiple providers specified"
-    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=761035"
+    print "Setup of the regression test based on bug740592"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
+    
     #run the cleanup configuration
     print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-            
-    #first backup old rhvm file
-    print "Backup old rhevm configuration file"
-    if os.path.isfile(RHEVMconfigureFile):
-        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
-    #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
-    if os.path.isfile(RHEVMbugFile):
-        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
-    else:
-        print RHEVMbugFile + " didn't find!"
-        return False
-    
+        
     #first backup old vsphere file
     print "Backup old vsphere configuration file"
     if os.path.isfile(VSPHEREconfigureFile):
         shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
     #then copy the conf. file
     print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
-    if os.path.isfile(VSPHEREbugFile):
-        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
+    if os.path.isfile(VSPHEREbug755029File):
+        shutil.copyfile(VSPHEREbug755029File, VSPHEREconfigureFile)
     else:
-        print VSPHEREbugFile + " didn't find!"
-        return False
-    
-    print "running aeolus-configure -p ec2,vsphere,rhevm"
-    if os.system("aeolus-configure -p ec2,vsphere,rhevm") != SUCCESS:
-        print "Some error raised in aeolus-configure !"
+        print VSPHEREbug755029File + " didn't find!"
+        return False       
+        
+    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
+    print "running aeolus-configure -p vsphere"
+    if os.system("aeolus-configure -p vsphere") != SUCCESS:
+        print "Some error raised in aeolus-configure with parameter -p vsphere !"
         return False
     print "Clearing log file for Image Factory"
     os.system("> " + LogFile)
@@ -98,22 +91,19 @@ def setupTest():
    
 #body
 def bodyTest():
+#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    target_image = list()
-    for command in CrazyCommand:
-        try:
-            print command
-            retcode = os.popen(command).read()
-            print "output is :"
-            print retcode
-            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+    try:
+        print CrazyCommand
+        retcode = os.popen(CrazyCommand).read()
+        print "output is :"
+        print retcode
+        target_image = (re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
 
-        except subprocess.CalledProcessError, e:
-            print >>sys.stderr, "Execution failed:", e
-            return False
+    except subprocess.CalledProcessError, e:
+        print >>sys.stderr, "Execution failed:", e
+        return False
         time.sleep(10) #sleep for 10 seconds        
     print "wait until build process is done"
     #setup counter to do not wait longer then 1 hour
@@ -129,11 +119,11 @@ def bodyTest():
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
                 return False
-        
-    print "Checking if there is any error in error log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
-        print "Found FAILED or error message in log file:"
-        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
+            
+    print "Checking if there is any visible password "+password_yaml["vsphere_password"]+" in error log of image factory"
+    if os.system("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFile) == SUCCESS:
+        print "Found "+password_yaml["vsphere_password"]+":"
+        outputtmp = os.popen("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFile).read()
         print outputtmp
         print "See the output from log file " + LogFile + ":"
         print "======================================================"
@@ -146,12 +136,9 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
-    if os.path.isfile(RHEVMBackupFile):
-        #copy file back rhevm
-        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
     if os.path.isfile(VSPHEREBackupFile):
         #copy file back VSPHERE
-        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile)    
+        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile) 
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
