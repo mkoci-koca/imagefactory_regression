@@ -1,8 +1,9 @@
+#
 # list of regression tests to execute in Hudson/Jenkins
 # you can use even parameters for each script
 # created by: koca mkoci@redhat.com 
 # date: 09/12/2011
-# modified: 15/12/2011
+#
 
 bug689863.py  #1. aeolus-configure should no longer deploy /etc/init.d/iwhd and /etc/iwhd/conf.js
 bug693514.py  #2. aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
@@ -15,3 +16,4 @@ bug745445.py  #8. Relevant message should be displayed while stopping iwhd
 bug758687.py  #9. Wild char '&' in template will cause XML parse error
 bug768028.py  #10.F16 doesn't build in Factory
 bug761254.py  #11.Imagefactory only allows one image to be built 
+bug755029.py  #12. aeolus-cli push displays provider account passwd 
