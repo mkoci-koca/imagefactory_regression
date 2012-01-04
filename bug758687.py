@@ -16,7 +16,6 @@
 #        Regression test for Image Factory #bug758687 - Wild char '&' in template will cause XML parse error
 #        Created by koca (mkoci@redhat.com)
 #        Date: 15/12/2011
-#        Modified: 15/12/2011
 #        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=758687
 # return values:
 # 0 - OK: everything OK
@@ -41,7 +40,8 @@ ROOTID=0
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 TmpFile="deleteme_bug758687"
-CrazyCommand="imagefactory --debug --target rhevm --template templates/bug758687.tdl |& tee " + TmpFile 
+CrazyCommand="imagefactory --debug --target ec2 --template templates/bug758687.tdl |& tee " + TmpFile
+
 
 def setupTest():
     print "=============================================="
@@ -51,10 +51,13 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "Cleanup configuration...."
-    os.system("aeolus-cleanup")
-    print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
+    if os.system("aeolus-cleanup") != SUCCESS:
+        print "Some error raised in aeolus-cleanup !"
+                
+    print "running aeolus-configure -p ec2"
+    if os.system("aeolus-configure -p ec2") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"

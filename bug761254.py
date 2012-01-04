@@ -16,7 +16,6 @@
 #        Regression test for Image Factory #bug761254
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
-#        Modified: 09/12/2011
 #        Issue: imagefactory only allows one image to be built
 # return values:
 # 0 - OK: everything OK
@@ -31,7 +30,7 @@ import sys
 import time
 import subprocess
 import re
-
+import shutil
 import oauth2 as oauth
 import httplib2
 import json
@@ -52,7 +51,6 @@ MINUTE=60
 #setup variables, constants
 CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug761254.tdl;",\
               "aeolus-cli build --target ec2 --template templates/bug761254.tdl;",\
-              "aeolus-cli build --target rackspace --template templates/bug761254.tdl;",\
               "aeolus-cli build --target vsphere --template templates/bug761254.tdl;"]
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
@@ -64,6 +62,12 @@ params = {'oauth_version':"0.4.4",
           'oauth_signature_method':sig_method.name,
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
+RHEVMbugFile="imagefactory/rhevm"
+RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
+RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
+VSPHEREbugFile="imagefactory/vsphere"
+VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
+VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
 
 def setupTest():
     print "=============================================="
@@ -73,11 +77,37 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "Cleanup configuration...."
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
+            
+    #first backup old rhvm file
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False
+    
+    #first backup old vsphere file
+    print "Backup old vsphere configuration file"
+    if os.path.isfile(VSPHEREconfigureFile):
+        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
+    if os.path.isfile(VSPHEREbugFile):
+        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
+    else:
+        print VSPHEREbugFile + " didn't find!"
+        return False
+    
+    print "running aeolus-configure -p ec2,vsphere,rhevm"
+    if os.system("aeolus-configure -p ec2,vsphere,rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
@@ -192,6 +222,12 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
+    if os.path.isfile(RHEVMBackupFile):
+        #copy file back rhevm
+        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
+    if os.path.isfile(VSPHEREBackupFile):
+        #copy file back VSPHERE
+        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile) 
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  

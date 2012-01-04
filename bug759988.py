@@ -16,7 +16,6 @@
 #        Regression test for Image Factory #bug759988 
 #        Created by koca (mkoci@redhat.com)
 #        Date: 02/12/2011
-#        Modified: 09/12/2011
 #        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=759988 - checking aeolus-check-services 
 # return values:
 # 0 - OK: everything OK
@@ -53,8 +52,8 @@ def setupTest():
     print "Cleanup configuration...."
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "running aeolus-configure"
-    if os.system("aeolus-configure") != SUCCESS:
+    print "running aeolus-configure -p ec2"
+    if os.system("aeolus-configure -p ec2") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     return True

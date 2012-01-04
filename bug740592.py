@@ -16,7 +16,6 @@
 #        Regression test for Image Factory #bug740592
 #        Created by koca (mkoci@redhat.com)
 #        Date: 28/11/2011
-#        Modified: 28/11/2011
 #        Issue: aeolus-configure creates a /etc/rhevm.json file which imagefactory uses to push
 #               images to rhevm.  The latest version of imagefactory now expects this in
 #               /etc/imagefactory directory.
@@ -64,16 +63,15 @@ def setupTest():
     print "Backup old rhevm configuration file"
     if os.path.isfile(RHEVMconfigureFile):
         shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
-    
     #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm"
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
     if os.path.isfile(RHEVMbugFile):
         shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
     else:
         print RHEVMbugFile + " didn't find!"
         return False
     
-    #rename rhevm.json file ir exists
+    #rename rhevm.json file if exists
     if os.path.isfile(ExpectedFile02):
         os.remove(ExpectedFile02)
         

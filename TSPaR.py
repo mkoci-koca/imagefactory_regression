@@ -17,7 +17,6 @@
 #        Target Specific Packages and Repos
 #        Created by koca (mkoci@redhat.com)
 #        Date: 03/01/2012
-#        Modified: 03/01/2012
 #        Issue: Starting with commit 057e66 we have introduced initial support for 
 #               specifying target-specific packages and repositories outside of the TDL passed in to 
 #               the build command. For now, you must specify this information in a local config file 
@@ -90,7 +89,7 @@ def setupTest():
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
     print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
+    if os.system("aeolus-configure -p ec2,mock,vsphere,rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Creating the " + target_content_file + " file"

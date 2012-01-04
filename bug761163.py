@@ -16,7 +16,6 @@
 #        Regression test for Image Factory #bug761163
 #        Created by koca (mkoci@redhat.com)
 #        Date: 15/12/2011
-#        Modified: 15/12/2011
 #        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=761163 - RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
 # return values:
 # 0 - OK: everything OK
@@ -31,7 +30,7 @@ import sys
 import time
 import subprocess
 import re
-
+import shutil
 import oauth2 as oauth
 import httplib2
 import json
@@ -58,6 +57,9 @@ params = {'oauth_version':"0.4.4",
           'oauth_signature_method':sig_method.name,
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
+RHEVMbugFile="imagefactory/rhevm"
+RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
+RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
 
 def setupTest():
     print "=============================================="
@@ -67,12 +69,26 @@ def setupTest():
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
         return False #exit the test
-    print "Cleanup configuration...."
+    #run the cleanup configuration
+    print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
-        print "Some error raised in aeolus-configure !"
+        
+    #first backup old rhvm file
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False          
+    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
+    print "running aeolus-configure -p rhevm"
+    if os.system("aeolus-configure -p rhevm") != SUCCESS:
+        print "Some error raised in aeolus-configure with parameter -p rhevm !"
         return False
     print "Clearing log file for Image Factory"
     os.system("> " + LogFileIF)
@@ -178,6 +194,9 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"
+    if os.path.isfile(RHEVMBackupFile):
+        #copy file back
+        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile)
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  

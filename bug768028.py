@@ -41,7 +41,7 @@ ROOTID=0
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
 TmpFile="deleteme_bug768028"
-CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + TmpFile
+CrazyCommand="imagefactory --debug --target ec2 --template templates/bug768028.tdl |& tee " + TmpFile
 
 def setupTest():
     print "=============================================="
@@ -54,8 +54,8 @@ def setupTest():
     print "Cleanup configuration...."
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Running aeolus-configure....."
-    if os.system("aeolus-configure") != SUCCESS:
+    print "Running aeolus-configure -p ec2"
+    if os.system("aeolus-configure -p ec2") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
