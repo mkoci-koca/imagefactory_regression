@@ -52,7 +52,7 @@ password_yaml = load(file(VSPHEREbug755029File, 'r').read())
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 CrazyCommand="aeolus-cli build --target vsphere --template templates/bug755029.tdl;"
-LogFile="/var/log/imagefactory.log"
+LogFileIF=configuration["LogFileIF"]
 target_image=""
 
 def setupTest():
@@ -86,7 +86,7 @@ def setupTest():
         print "Some error raised in aeolus-configure with parameter -p vsphere !"
         return False
     print "Clearing log file for Image Factory"
-    os.system("> " + LogFile)
+    os.system("> " + LogFileIF)
     return True
    
 #body
@@ -99,8 +99,16 @@ def bodyTest():
         retcode = os.popen(CrazyCommand).read()
         print "output is :"
         print retcode
-        target_image = (re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-
+        tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+        if tempvar == None:
+            print "An unknown error occurred. I'm not able to get target image ID. Check the log file out. Imagefactory building can be running though"
+            print "======================================================"
+            outputtmp = os.popen("cat " + LogFileIF).read()
+            print outputtmp
+            print "Test FAILED =============================================================="
+            return False
+        else:
+            target_image = tempvar.group(1)
     except subprocess.CalledProcessError, e:
         print >>sys.stderr, "Execution failed:", e
         return False
@@ -121,13 +129,13 @@ def bodyTest():
                 return False
             
     print "Checking if there is any visible password "+password_yaml["vsphere_password"]+" in error log of image factory"
-    if os.system("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFile) == SUCCESS:
+    if os.system("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
         print "Found "+password_yaml["vsphere_password"]+":"
-        outputtmp = os.popen("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFile).read()
+        outputtmp = os.popen("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFileIF).read()
         print outputtmp
-        print "See the output from log file " + LogFile + ":"
+        print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
-        outputtmp = os.popen("cat " + LogFile).read()
+        outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
         return False
     return True
