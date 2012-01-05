@@ -51,7 +51,7 @@ VSPHEREbug755029File=configuration["VSPHEREbug755029File"]
 password_yaml = load(file(VSPHEREbug755029File, 'r').read())
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
-CrazyCommand="aeolus-cli build --target vsphere --template templates/bug761035.tdl;"
+CrazyCommand="aeolus-cli build --target vsphere --template templates/bug755029.tdl;"
 LogFile="/var/log/imagefactory.log"
 target_image=""
 
