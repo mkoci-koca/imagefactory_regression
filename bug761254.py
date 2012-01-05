@@ -34,9 +34,9 @@ import shutil
 import oauth2 as oauth
 import httplib2
 import json
-#import pdb
-#from pprint import pprint
 
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 
 #constants 
 SUCCESS=0
@@ -49,11 +49,11 @@ ROOTID=0
 TIMEOUT=180
 MINUTE=60
 #setup variables, constants
-CrazyCommand=["aeolus-cli build --target rhevm --template templates/bug761254.tdl;",\
-              "aeolus-cli build --target ec2 --template templates/bug761254.tdl;",\
-              "aeolus-cli build --target vsphere --template templates/bug761254.tdl;"]
-LogFileIF="/var/log/imagefactory.log"
-LogFileIWH="/var/log/iwhd.log"
+CrazyCommand=["aeolus-image build --target rhevm --template templates/bug761254.tdl;",\
+              "aeolus-image build --target ec2 --template templates/bug761254.tdl;",\
+              "aeolus-image build --target vsphere --template templates/bug761254.tdl;"]
+LogFileIF=configuration["LogFileIF"]
+LogFileIWH=configuration["LogFileIWH"]
 consumer = oauth.Consumer(key='key', secret='secret')
 sig_method = oauth.SignatureMethod_HMAC_SHA1()
 params = {'oauth_version':"0.4.4",
@@ -62,12 +62,12 @@ params = {'oauth_version':"0.4.4",
           'oauth_signature_method':sig_method.name,
           'oauth_consumer_key':consumer.key}
 url_https="https://localhost:8075/imagefactory/builders/"
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
-VSPHEREbugFile="imagefactory/vsphere"
-VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
-VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
+VSPHEREbugFile=configuration["VSPHEREbugFile"]
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
 
 def setupTest():
     print "=============================================="
@@ -138,7 +138,7 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-            tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+            tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
             if  tempvar == None:
                 print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
                 print "======================================================"

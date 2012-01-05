@@ -51,7 +51,7 @@ VSPHEREbug755029File=configuration["VSPHEREbug755029File"]
 password_yaml = load(file(VSPHEREbug755029File, 'r').read())
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
-CrazyCommand="aeolus-cli build --target vsphere --template templates/bug755029.tdl;"
+CrazyCommand="aeolus-image build --target vsphere --template templates/bug755029.tdl;"
 LogFileIF=configuration["LogFileIF"]
 target_image=""
 
@@ -99,7 +99,7 @@ def bodyTest():
         retcode = os.popen(CrazyCommand).read()
         print "output is :"
         print retcode
-        tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+        tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
         if tempvar == None:
             print "An unknown error occurred. I'm not able to get target image ID. Check the log file out. Imagefactory building can be running though"
             print "======================================================"
@@ -119,7 +119,7 @@ def bodyTest():
     
     for timage in target_image:
         print "Let\'s check this image: " + timage
-        while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
+        while os.system("aeolus-image status --targetimage " + timage + "|grep -i building") == SUCCESS:
             Counter=Counter+1
             #wait a minute
             time.sleep(TIMEOUT)

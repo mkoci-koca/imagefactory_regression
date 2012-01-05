@@ -31,7 +31,8 @@ import time
 import subprocess
 import re
 import shutil
-
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
 FAILED=1
@@ -42,14 +43,14 @@ RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=180
 #setup variables, constants
-CrazyCommand=["aeolus-cli build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
-LogFile="/var/log/imagefactory.log"
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
-VSPHEREbugFile="imagefactory/vsphere"
-VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
-VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
+CrazyCommand=["aeolus-image build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
+LogFileIF=configuration["LogFileIF"]
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
+VSPHEREbugFile=configuration["VSPHEREbugFile"]
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 
 def setupTest():
     print "=============================================="
@@ -93,7 +94,7 @@ def setupTest():
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
-    os.system("> " + LogFile)
+    os.system("> " + LogFileIF)
     return True
    
 #body
@@ -107,10 +108,13 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-
+#            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+#            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+#            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
+            tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*\n([a-zA-Z0-9\-]*).*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
+            target_image.append(tempvar.group(1))
+            target_image.append(tempvar.group(2))
+            target_image.append(tempvar.group(3))
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False
@@ -121,7 +125,7 @@ def bodyTest():
     
     for timage in target_image:
         print "Let\'s check this image: " + timage
-        while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
+        while os.system("aeolus-image status --targetimage " + timage + "|grep -i building") == SUCCESS:
             Counter=Counter+1
             #wait a minute
             time.sleep(TIMEOUT)
@@ -131,13 +135,13 @@ def bodyTest():
                 return False
         
     print "Checking if there is any error in error log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFile) == SUCCESS:
+    if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
         print "Found FAILED or error message in log file:"
-        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFile).read()
+        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
         print outputtmp
-        print "See the output from log file " + LogFile + ":"
+        print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
-        outputtmp = os.popen("cat " + LogFile).read()
+        outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
         return False
     return True

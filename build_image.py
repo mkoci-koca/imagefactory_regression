@@ -34,6 +34,8 @@ import json
 import re
 import time
 import shutil
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
 FAILED=1
@@ -45,8 +47,8 @@ ROOTID=0
 TIMEOUT=180
 MINUTE=60
 #setup
-LogFileIF="/var/log/imagefactory.log"
-LogFileIWH="/var/log/iwhd.log"
+LogFileIF=configuration["LogFileIF"]
+LogFileIWH=configuration["LogFileIWH"]
 # Define a list to collect all tests
 alltests = list()
 results = list()
@@ -74,12 +76,12 @@ templatesetupvar = ["""<packages>
       </files>""", """"""]
 architectures=["i386", "x86_64"]
 targetimages=["ec2", "rhevm", "mock", "vsphere"]
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
-VSPHEREbugFile="imagefactory/vsphere"
-VSPHEREconfigureFile="/etc/aeolus-configure/nodes/vsphere_configure"
-VSPHEREBackupFile="/etc/aeolus-configure/nodes/vshpere_configure.bck"
+VSPHEREbugFile=configuration["VSPHEREbugFile"]
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
 
 # Define an object to record test results
 class TestResult(object):
@@ -203,7 +205,7 @@ class TestResult(object):
         print "======================================================"
         outputtmp = os.popen("cat "+temporaryfile).read()
         print outputtmp        
-        CrazyCommand = "aeolus-cli build --target %s --template " % targetim + temporaryfile
+        CrazyCommand = "aeolus-image build --target %s --template " % targetim + temporaryfile
         target_image = ""
         try:
             print CrazyCommand
@@ -211,7 +213,7 @@ class TestResult(object):
             print "output is :"
             print retcode
             #get target image BEGIN
-            tempvar = re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I)
+            tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
             if tempvar == None:
                 print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
                 print "======================================================"

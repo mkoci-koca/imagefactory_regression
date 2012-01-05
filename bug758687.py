@@ -27,7 +27,8 @@
 #necessary libraries
 import os
 import sys
-
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
 FAILED=1
@@ -37,8 +38,8 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
-LogFileIF="/var/log/imagefactory.log"
-LogFileIWH="/var/log/iwhd.log"
+LogFileIF=configuration["LogFileIF"]
+LogFileIWH=configuration["LogFileIWH"]
 TmpFile="deleteme_bug758687"
 CrazyCommand="imagefactory --debug --target ec2 --template templates/bug758687.tdl |& tee " + TmpFile
 

@@ -30,7 +30,8 @@
 import os
 import sys
 import shutil
-
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
 FAILED=1
@@ -42,9 +43,9 @@ ROOTID=0
 #setup
 ExpectedFile01="/etc/imagefactory/vsphere.json"
 ExpectedFile02="/etc/imagefactory/rhevm.json"
-RHEVMbugFile="imagefactory/rhevm"
-RHEVMconfigureFile="/etc/aeolus-configure/nodes/rhevm_configure"
-RHEVMBackupFile="/etc/aeolus-configure/nodes/rhevm_configure.bck"
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
 
 def setupTest():
     print "=============================================="
