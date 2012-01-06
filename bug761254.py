@@ -46,7 +46,7 @@ RET_BODYTEST=2
 RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
-TIMEOUT=180
+TIMEOUT=360
 MINUTE=60
 #setup variables, constants
 CrazyCommand=["aeolus-image build --target rhevm --template templates/bug761254.tdl;",\

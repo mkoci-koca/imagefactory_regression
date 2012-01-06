@@ -14,6 +14,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #        Regression test for Image Factory #bug758687 - Wild char '&' in template will cause XML parse error
+#        Note: we should escape for special characters special seqeunces as follow
+#        &amp;     &
+#        &apos;     '
+#        &quot;     "
+#        &lt;     <
+#        &gt;     >
 #        Created by koca (mkoci@redhat.com)
 #        Date: 15/12/2011
 #        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=758687

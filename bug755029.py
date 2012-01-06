@@ -117,21 +117,20 @@ def bodyTest():
     #setup counter to do not wait longer then 1 hour
     Counter=0
     
-    for timage in target_image:
-        print "Let\'s check this image: " + timage
-        while os.system("aeolus-image status --targetimage " + timage + "|grep -i building") == SUCCESS:
-            Counter=Counter+1
-            #wait a minute
-            time.sleep(TIMEOUT)
-            #after an hour break the 
-            if Counter > TIMEOUT:
-                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-                return False
+    print "Let\'s check this image: " + target_image
+    while os.system("aeolus-image status --targetimage " + target_image + "|grep -i building") == SUCCESS:
+        Counter=Counter+1
+        #wait a minute
+        time.sleep(TIMEOUT)
+        #after an hour break the 
+        if Counter > TIMEOUT:
+            print "Error: timeout over "+str(TIMEOUT)+" minutes !"
+            return False
             
-    print "Checking if there is any visible password "+password_yaml["vsphere_password"]+" in error log of image factory"
-    if os.system("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
-        print "Found "+password_yaml["vsphere_password"]+":"
-        outputtmp = os.popen("grep -i \""+password_yaml["vsphere_password"]+"\" " + LogFileIF).read()
+    print "Checking if there is any visible password "+password_yaml['parameters']["vsphere_password"]+" in error log of image factory"
+    if os.system("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
+        print "Found "+password_yaml['parameters']["vsphere_password"]+":"
+        outputtmp = os.popen("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF).read()
         print outputtmp
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"

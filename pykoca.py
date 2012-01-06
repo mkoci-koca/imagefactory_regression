@@ -37,7 +37,7 @@ RET_UNEXPECTED_ERROR=4
 
 UNEXPECTED_ERROR_MESSAGE="An unexpected error - test FAILED !!"
 SUCCESS_MESSAGE="PASSED"
-SETUPTEST_MESSAGE="Setup of the test FAILED !!"
+SETUPTEST_MESSAGE="Setup of the test FAILED or an exception raised !!"
 BODYTEST_MESSAGE="Body FAILED !!"
 CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
