@@ -146,6 +146,11 @@ def bodyTest():
         outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
         return False
+    
+    print "The last check of status of each target image..."
+    for timage in target_image:
+        print "aeolus-image status --targetimage " + timage
+        os.system("aeolus-image status --targetimage " + timage)
     return True
  
 #cleanup after test
