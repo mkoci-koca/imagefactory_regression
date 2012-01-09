@@ -108,9 +108,6 @@ def bodyTest():
             retcode = os.popen(command).read()
             print "output is :"
             print retcode
-#            target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-#            target_image.append(re.search(r'.*Target Image:.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-#            target_image.append(re.search(r'.*Target Image:.*\n.*\nTarget Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
             tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*\n([a-zA-Z0-9\-]*).*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
             target_image.append(tempvar.group(1))
             target_image.append(tempvar.group(2))

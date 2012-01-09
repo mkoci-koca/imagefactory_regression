@@ -44,7 +44,7 @@ RET_BODYTEST=2
 RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
-TIMEOUT=180
+TIMEOUT=360
 MINUTE=60
 #setup variables, constants
 CrazyCommand=["aeolus-image build --target rhevm --template templates/bug761163.tdl;"]
@@ -151,6 +151,8 @@ def bodyTest():
             Counter=Counter+1
             #wait a minute
             time.sleep(MINUTE)
+            data = json.loads(helpTest(timage))
+            print "Data Status: " + data['status']
             #after an hour break the 
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
