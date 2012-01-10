@@ -14,6 +14,7 @@ bug761035.py  #6. Build hangs when multiple providers specified
 bug761163.py  #7. RHEL 5.7 failed to build with <?xml version="1.0" encoding="UTF-8"?> in system template
 bug745445.py  #8. Relevant message should be displayed while stopping iwhd
 bug758687.py  #9. Wild char '&' in template will cause XML parse error
-bug768028.py  #10.F16 doesn't build in Factory
-bug761254.py  #11.Imagefactory only allows one image to be built 
+bug768028.py  #10. F16 doesn't build in Factory
+bug761254.py  #11. Imagefactory only allows one image to be built 
 bug755029.py  #12. aeolus-cli push displays provider account passwd 
+bug768945.py  #13. Build failures using system engine template that installs additional packages

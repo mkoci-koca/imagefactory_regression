@@ -267,7 +267,7 @@ class TestResult(object):
         print "Let\'s check this image: " + target_image
         data = json.loads(self.__helpTest(target_image))
         print "Data Status for image "+target_image+": " + data['status']
-        if data['status'] != "COMPLETED":
+        if data['status'] == "FAILED":
             print "Build "+target_image+" is not completed for some reason! It looks it stuck in the NEW status."
             print "Perhaps you can find something in the log file " + LogFileIF + ":"
             print "======================================================"
@@ -278,7 +278,20 @@ class TestResult(object):
             outputtmp = os.popen("cat " + LogFileIWH).read()
             print outputtmp  
             print "Test FAILED =============================================================="      
-            return False    
+            return False 
+        
+        Counter=0
+        while data['status'] in ("BUILDING", "New"):
+            Counter=Counter+1
+            #wait a minute
+            time.sleep(MINUTE)
+            data = json.loads(self.__helpTest(target_image))
+            print "Data Status: " + data['status']
+            #after an hour break the 
+            if Counter > TIMEOUT:
+                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
+                print "Test FAILED =============================================================="
+                return False           
         return True
     
     def handle_exception(self, args):
