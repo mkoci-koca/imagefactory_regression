@@ -287,6 +287,9 @@ class TestResult(object):
             time.sleep(MINUTE)
             data = json.loads(self.__helpTest(target_image))
             print "Data Status: " + data['status']
+            if data['status'] == "New":
+                #let's speed up a little bit process as New state looks like stuck
+                Counter = Counter+12
             #after an hour break the 
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
