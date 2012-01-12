@@ -81,7 +81,7 @@ def setupTest():
     print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-            
+        return False    
     #first backup old rhvm file
     print "Backup old rhevm configuration file"
     if os.path.isfile(RHEVMconfigureFile):
@@ -173,7 +173,7 @@ def bodyTest():
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
                 return False
     #check if there is no error in logs    
-    print "Checking if there is any error in erro log of image factory"
+    print "Checking if there is any error in log of image factory"
     if os.system("grep -i \"FAILED\\|Error\"" + LogFileIF) == SUCCESS:
         print "Found FAILED or error message in log file:"
         outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
