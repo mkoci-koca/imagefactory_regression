@@ -3,10 +3,10 @@
   <description>brew_test1</description>
   <os>
     <name>RHEL-6</name>
-    <version>1</version>
+    <version>2</version>
     <arch>x86_64</arch>
     <install type="url">
-      <url>http://lab-02.rhts.eng.bos.redhat.com/net/bigpapi.bos.redhat.com/vol/engarchive2/redhat/released/RHEL-6/6.1-RC-3/Server/x86_64/os/</url>
+      <url>http://lab-02.rhts.eng.bos.redhat.com/net/bigpapi.bos.redhat.com/vol/engarchive2/redhat/released/RHEL-6/6.2/Server/x86_64/os/</url>
     </install>
     <rootpw>redhat</rootpw>
   </os>
