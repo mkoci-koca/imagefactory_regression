@@ -3,10 +3,10 @@
   <description>brew_test1</description>
   <os>
     <name>RHEL-6</name>
-    <version>2</version>
+    <version>1</version>
     <arch>x86_64</arch>
-    <install type="iso">
-      <iso>http://10.34.30.210/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso</iso>
+    <install type="url">
+      <url>http://lab-02.rhts.eng.bos.redhat.com/net/bigpapi.bos.redhat.com/vol/engarchive2/redhat/released/RHEL-6/6.1/Server/x86_64/os</url>
     </install>
     <rootpw>redhat</rootpw>
   </os>
