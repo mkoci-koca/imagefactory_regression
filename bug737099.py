@@ -13,12 +13,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug740592
-#        Created by koca (mkoci@redhat.com)
-#        Date: 28/11/2011
-#        Issue: aeolus-configure creates a /etc/rhevm.json file which imagefactory uses to push
-#               images to rhevm.  The latest version of imagefactory now expects this in
-#               /etc/imagefactory directory.
+#        Regression test for Image Factory #bug737099
+#        Created by bcrochet (brad@redhat.com)
+#        Date: 17/01/2012
+#        Issue: RFE: screen shots could default to /var/www/html, include link in logs
+#
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
