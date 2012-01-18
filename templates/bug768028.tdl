@@ -5,8 +5,8 @@
     <version>16</version>
     <arch>x86_64</arch>
     <rootpw>password</rootpw>
-    <install type="iso">
-      <iso>http://10.34.30.210/iso/Fedora16x86_64-iso.iso</iso>
+    <install type="url">
+      <url>http://ftp.linux.cz/pub/linux/fedora/linux/releases/16/Fedora/x86_64/os/</url>
     </install>
   </os>
   <description>Fedora 16 Web for Private RHEV Clouds</description>
