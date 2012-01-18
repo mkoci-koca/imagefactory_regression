@@ -29,6 +29,8 @@
 import os
 import sys
 from syck import *
+import shutil
+
 configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
@@ -41,8 +43,11 @@ ROOTID=0
 #setup
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
 TmpFile="deleteme_bug768028"
-CrazyCommand="imagefactory --debug --target ec2 --template templates/bug768028.tdl |& tee " + TmpFile
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + TmpFile
 
 def setupTest():
     print "=============================================="
@@ -55,8 +60,19 @@ def setupTest():
     print "Cleanup configuration...."
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Running aeolus-configure -p ec2"
-    if os.system("aeolus-configure -p ec2") != SUCCESS:
+    #first backup old rhvm file
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False
+    print "Running aeolus-configure -p rhevm"
+    if os.system("aeolus-configure -p rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure !"
         return False
     print "Clearing log file for Image Factory"
@@ -70,7 +86,9 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
+    print "Run command " + CrazyCommand
     os.system(CrazyCommand)
+    print "Checking if there is any error on error log...."
     if os.system("grep -i \"error\\|failed\" " +  TmpFile) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
@@ -80,7 +98,10 @@ def bodyTest():
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIWH).read()
         print outputtmp     
-        return False     
+        return False
+    print "See the imagefactory log file:"
+    outputtmp = os.popen("cat " + LogFileIF).read()
+    print outputtmp     
     return True
  
 #cleanup after test
@@ -90,6 +111,9 @@ def cleanTest():
     if os.path.isfile(TmpFile):
         os.remove(TmpFile)
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
+    if os.path.isfile(RHEVMBackupFile):
+    #copy file back rhevm
+        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
