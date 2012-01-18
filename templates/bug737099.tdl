@@ -1,0 +1,13 @@
+<template>
+  <name>bug737099</name>
+  <description>Generate screenshots in another dir</description>
+  <os>
+    <name>RHEL-6</name>
+    <version>2</version>
+    <arch>x86_64</arch>
+    <install type="url">
+      <url>http://lab-02.rhts.eng.bos.redhat.com/net/bigpapi.bos.redhat.com/vol/engarchive2/redhat/released/RHEL-6/6.2/Server/x86_64/os/</url>
+    </install>
+    <rootpw>redhat</rootpw>
+  </os>
+</template>
