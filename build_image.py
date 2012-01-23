@@ -74,14 +74,24 @@ templatesetupvar = ["""<packages>
           Aeolus Cloud Test page on Build Created
         </file>
       </files>""", """"""]
-architectures=["i386", "x86_64"]
-targetimages=["ec2", "rhevm", "mock", "vsphere"]
+architectures=configuration['architectures']    
+#["i386", "x86_64"]
+installtypes=configuration["installtypes"]      
+#["url", "iso"]
+targetimages=configuration["targetimages"]      
+#["ec2", "rhevm", "mock", "vsphere"]
+
 VSPHEREbugFile=configuration["VSPHEREbugFile"]
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
+#distribution to build in imagefactory and aeolus-image
+distros={"RHEL-6":{"2":["http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/", "/iso/RHEL6.2-20111117.0-Server-", "-DVD1.iso"],
+                  "1":["http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/", "/iso/RHEL6.1-20110510.1-Server-", "-DVD1.iso"]},
+         "Fedora":{"15":["http://download.englab.brq.redhat.com/released/F-15/GOLD/Fedora/", "/iso/Fedora-15-", "-DVD.iso"],
+                   "16":["http://download.englab.brq.redhat.com/released/F-16/GOLD/Fedora/", "/iso/Fedora-16-", "-DVD.iso"]}}
 
 # Define an object to record test results
 class TestResult(object):
@@ -389,12 +399,14 @@ def bodyTest():
     for templatesetup in templatesetupvar:
         for targetimage in targetimages:
             for arch in architectures:
-                for installtype in ["url", "iso"]:
-                    if installtype == "url":
-                        isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/os/" % arch
-                    else:
-                        isourlstrvar = "http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/%s/iso/RHEL6.1-20110510.1-Server-%s-DVD1.iso" % (arch, arch)
-                    expectSuccess("RHEL6", "1", arch, installtype, isourlstrvar , targetimage, templatesetup)
+                for installtype in installtypes:
+                    for distro_p, distro in distros.iteritems():
+                        for os_distro_p, os_distro in distro.iteritems():    
+                            if installtype == "url":
+                                isourlstrvar = "%s%s/os/" % (os_distro[0], arch)
+                            else:
+                                isourlstrvar = "%s%s%s%s%s" % (os_distro[0], arch, os_distro[1], arch, os_distro[2])
+                            expectSuccess(distro_p, os_distro_p, arch, installtype, isourlstrvar , targetimage, templatesetup)                    
     
     for onetest in alltests:
         results.append(onetest.execute())
