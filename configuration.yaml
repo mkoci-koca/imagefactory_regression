@@ -21,7 +21,7 @@ ozScreenshotDir: "/var/lib/oz/screenshots"
 #---
 installtypes: 
 - "url"
-- "iso"
+#- "iso"
 targetimages:
 - "ec2"
 - "rhevm"
