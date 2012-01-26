@@ -1,0 +1,30 @@
+<template>
+	<name>rhel61</name>
+	<os>
+		<name>RHEL-6</name>
+		<version>1</version>
+		<arch>x86_64</arch>
+		<install type="url">
+			<url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
+		</install>
+		<rootpw>redhat</rootpw>
+	</os>
+	<description/>
+	<packages>
+		<package name="aeolus-audrey-agent"/>
+	</packages>
+	<repositories>
+		<repository name="ap-puddle with spaces">
+			<url>http://download.lab.bos.redhat.com/rel-eng/CloudForms/CloudEngine/1.0/latest/el6/x86_64/</url>
+		<persisted>No</persisted>
+		</repository>
+		<repository name="ap-brew with spaces">
+			<url>http://download.lab.bos.redhat.com/brewroot/repos/ce-rhel-6-build/latest/x86_64/</url>
+		<persisted>No</persisted>
+		</repository>
+		<repository name="Red Hat Enterprise Linux 6 Server RPMs 61 x86_64">
+			<url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
+		<persisted>No</persisted>
+		</repository>
+	</repositories>
+</template>

@@ -5,8 +5,8 @@
     <version>1</version>
     <arch>x86_64</arch>
     <rootpw>redwine</rootpw>
-    <install type='iso'>
-      <iso>http://10.34.30.210/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso</iso>
+    <install type="url">
+      <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
     </install>
   </os>
   <description>RHEL6.1 Web for Private RHEV Clouds</description>

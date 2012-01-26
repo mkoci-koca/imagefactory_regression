@@ -5,8 +5,8 @@
     <version>1</version>
     <arch>x86_64</arch>
     <rootpw>password</rootpw>
-    <install type='iso'>
-      <iso>http://10.34.30.210/iso/RHEL6.1-20110510.1-Server-x86_64-DVD1.iso</iso>
+    <install type="url">
+      <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
     </install>
   </os>
   <packages>
@@ -20,7 +20,7 @@
   </files>
   <commands>
     <command name="start_web">
-         /sbin/chkconfig httpd on 2>&amp;1 > /root/launch_cmd.log
+         /sbin/chkconfig httpd on 2&gt;&amp;1 &gt; /root/launch_cmd.log
     </command>
   </commands>
   <description>RHEL6.1 Web for Private RHEV Clouds</description>
