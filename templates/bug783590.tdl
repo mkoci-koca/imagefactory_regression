@@ -1,0 +1,22 @@
+<template>
+  <name>Fedora 15 Audrey Client</name>
+  <os>
+    <name>Fedora</name>
+    <version>15</version>
+    <arch>x86_64</arch>
+    <install type='url'>
+      <url>http://download.englab.brq.redhat.com/released/F-15/GOLD/Fedora/x86_64/os/</url>
+    </install>
+    <rootpw>dog8code</rootpw>
+  </os>
+  <repositories>
+    <repository name="aeolus repository with spaces">
+     
+<url>http://repos.fedorapeople.org/repos/aeolus/conductor/testing/fedora-15/x86_64/</url>
+    </repository>
+  </repositories>
+  <packages>
+    <package name="aeolus-audrey-agent"/>
+  </packages>
+  <description>A Fedora 15 Template for Audrey Client</description>
+</template>
