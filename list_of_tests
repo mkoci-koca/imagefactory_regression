@@ -20,3 +20,4 @@ bug755029.py  #12. aeolus-cli push displays provider account passwd
 bug768945.py  #13. Build failures using system engine template that installs additional packages
 bug737099.py  #14. RFE: screen shots could default to /var/www/html, include link in logs
 bug783590.py  #15. mount_options: /dev/vda2 on /boot: mount: unknown filesystem type 'LVM2_member' for f15 builds
+bug769938.py  #16. Imagefactory building for condorcloud  FAILED
