@@ -22,3 +22,4 @@ bug737099.py  #14. RFE: screen shots could default to /var/www/html, include lin
 bug783590.py  #15. mount_options: /dev/vda2 on /boot: mount: unknown filesystem type 'LVM2_member' for f15 builds
 bug769938.py  #16. Imagefactory building for condorcloud  FAILED
 bug782950.py  #17. Change "max_concurrent_local_sessions": 1 to "2"
+bug785028.py  #18. Package group installs need to handle whitespaces
