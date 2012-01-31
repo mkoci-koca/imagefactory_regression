@@ -170,7 +170,11 @@ def bodyTest():
         print "See the output from log file " + LogFileIWH + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIWH).read()
-        print outputtmp        
+        print outputtmp 
+        print "See the template templates/bug785028.tdl"
+        print "======================================================"
+        outputtmp = os.popen("cat templates/bug785028.tdl").read()
+        print outputtmp       
         return False
 #check if status is either complete or building
     for timage in target_image:
