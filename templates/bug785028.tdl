@@ -12,7 +12,7 @@
   </os>
   <repositories>
     <repository name="rhel-repos">
-     <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/x86_64/</url>
+     <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/x86_64/os/</url>
     </repository>
   </repositories>
   <packages>
