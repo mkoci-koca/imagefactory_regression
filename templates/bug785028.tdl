@@ -10,6 +10,11 @@
     </install>
     <rootpw>redhat</rootpw>
   </os>
+  <repositories>
+    <repository name="rhel-repos">
+     <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/x86_64/</url>
+    </repository>
+  </repositories>
   <packages>
     <package name="@Eclipse"/>
     <package name="@Office Suite and Productivity"/>
