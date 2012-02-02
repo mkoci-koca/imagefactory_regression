@@ -6,11 +6,16 @@
     <version>1</version>
     <arch>x86_64</arch>
     <install type="url">
-      <url>http://download.devel.redhat.com/nightly/latest-RHEL6.1/6/Server/x86_64/os/</url>
+      <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
     </install>
     <rootpw>redhat</rootpw>
   </os>
+    <repositories>
+    <repository name="rhel_koca_repository">
+      <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
+    </repository>
+  </repositories>
   <packages>
-    <package name="rhev-fedora-generic-package"/>
+    <package name="git"/>
   </packages>
 </template>
