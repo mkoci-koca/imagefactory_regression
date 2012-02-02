@@ -32,6 +32,9 @@
 import os
 import sys
 import subprocess
+import shutil
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #setup
 target_content_file="/etc/imagefactory/target_content.xml"
 target_template="""<template_includes>
@@ -69,6 +72,12 @@ for template_item in templates:
         crazyCommand_list.append("imagefactory --debug --target %s --template %s" % (target, template_item[target]) + " |& tee " + tmplogfileIF) 
 LogFileIF="/var/log/imagefactory.log"
 LogFileIWH="/var/log/iwhd.log"
+VSPHEREbugFile=configuration["VSPHEREbugFile"]
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
+RHEVMbugFile=configuration["RHEVMbugFile"]
+RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
+RHEVMBackupFile=configuration["RHEVMBackupFile"]
 #constants 
 SUCCESS=0
 FAILED=1
@@ -88,6 +97,31 @@ def setupTest():
     print "Cleanup configuration...."
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
+ 
+#first backup old rhvm file
+    print "Backup old rhevm configuration file"
+    if os.path.isfile(RHEVMconfigureFile):
+        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
+    if os.path.isfile(RHEVMbugFile):
+        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
+    else:
+        print RHEVMbugFile + " didn't find!"
+        return False
+    
+    #first backup old vsphere file
+    print "Backup old vsphere configuration file"
+    if os.path.isfile(VSPHEREconfigureFile):
+        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
+    #then copy the conf. file
+    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
+    if os.path.isfile(VSPHEREbugFile):
+        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
+    else:
+        print VSPHEREbugFile + " didn't find!"
+        return False
+    
     print "Running aeolus-configure....."
     if os.system("aeolus-configure -p ec2,mock,vsphere,rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure !"
