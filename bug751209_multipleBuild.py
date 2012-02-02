@@ -134,6 +134,10 @@ def bodyTest():
             #after an hour break the 
             if Counter > TIMEOUT:
                 print "Error: timeout over "+str(TIMEOUT)+" minutes !"
+                print "See the output from log file " + LogFileIF + ":"
+                print "======================================================"
+                outputtmp = os.popen("cat " + LogFileIF).read()
+                print outputtmp
                 return False
         
     print "Checking if there is any error in erro log of image factory"
@@ -150,7 +154,7 @@ def bodyTest():
     print "The last check of status of each target image..."
     for timage in target_image:
         print "aeolus-image status --targetimage " + timage
-        os.system("aeolus-image status --targetimage " + timage)
+        os.system("aeolus-image status --targetimage " + timage + "|grep -i COMPLETE")
     return True
  
 #cleanup after test
