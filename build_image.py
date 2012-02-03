@@ -128,6 +128,10 @@ class TestResult(object):
         
     def __getTemplate(self, *args):
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
+        if installtype == "url":  
+            repositorystr = isourlstr
+        else:
+            repositorystr = isourlstr + "/../../os/"  
         print "Testing %s-%s-%s-%s-%s-%s..." % (distro, version, arch, installtype, targetim, isourlstr),      
         tdlxml = """
     <template>
@@ -141,9 +145,14 @@ class TestResult(object):
         </install>
         <rootpw>redhat</rootpw>
       </os>
+      <repositories>
+        <repository name='koca-repository'>
+            <url>%s</url>
+        </repository>
+     </repositories>
       %s
     </template>  
-    """ % (distro, version, arch, installtype, installtype, isourlstr, installtype, templatesetup)
+    """ % (distro, version, arch, installtype, installtype, isourlstr, installtype, repositorystr, templatesetup)
         return tdlxml
         
     def __runTestImageFactory(self, args):
