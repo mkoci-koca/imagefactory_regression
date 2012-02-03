@@ -139,6 +139,7 @@ def bodyTest():
                 outputtmp = os.popen("cat " + LogFileIF).read()
                 print outputtmp
                 return False
+        Counter=0
         
     print "Checking if there is any error in erro log of image factory"
     if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
