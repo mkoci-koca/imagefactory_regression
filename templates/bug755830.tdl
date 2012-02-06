@@ -1,7 +1,7 @@
 <template>
     <name>Ubuntu x86_64</name>
     <os>
-        <name>Fedora</name>
+        <name>Ubuntu</name>
         <version>11.10</version>
         <arch>x86_64</arch>
         <install type='iso'>
