@@ -65,7 +65,7 @@ def bodyTest():
     print "Running command " + CrazyCommand
     os.system(CrazyCommand)
     print "Checking if there is any error or failed message in the log..."
-    if os.system("grep -i \"error\\|failed\" " +  TmpFile) == SUCCESS:
+    if os.system("grep -i \"error\\|failed\\|oz.OzException.OzException\" " +  TmpFile) == SUCCESS:
         print "See the output from log file " + TmpFile + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + TmpFile).read()
