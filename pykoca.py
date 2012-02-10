@@ -42,7 +42,7 @@ BODYTEST_MESSAGE="Body FAILED !!"
 CLEANTEST_MESSAGE="Clean of the test FAILED !!"
 ERROR_MESSAGE="Error message"
 FAILED_MESSAGE="FAILED"
-workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/view/DEV-CloudForms/job/ImageFactory-KocaTesting2/ws/"
+workspace="http://hudson.rhq.lab.eng.bos.redhat.com:8080/hudson/job/ImageFactory-KocaTesting2/ws/"
 return_value=INIT_VALUE
 final_message="\n================================================================ REPORT ================================================================\n"
 summary_message_line="\n================================================================ SUMMARY ================================================================\n"
