@@ -49,7 +49,8 @@ RHEVMBackupFile=configuration["RHEVMBackupFile"]
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug740592"
+    print "Setup of the regression test based on bug740592 - imagefactory needs rhevm.json in /etc/imagefactory now"
+    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=740592"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
@@ -72,11 +73,18 @@ def setupTest():
         print RHEVMbugFile + " didn't find!"
         return False
     
-    #rename rhevm.json file if exists
+    #remove rhevm.json file if exists
+    print "Removing file " + ExpectedFile02 + " before aeolus-configure process"
     if os.path.isfile(ExpectedFile02):
         os.remove(ExpectedFile02)
+
+    #remove rhevm.json file if exists
+ #   print "Removing file " + ExpectedFile01 + " before aeolus-configure process"
+  #  if os.path.isfile(ExpectedFile01):
+   #     os.remove(ExpectedFile01)
         
-    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
+        
+    #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm_configure
     print "running aeolus-configure -p rhevm"
     if os.system("aeolus-configure -p rhevm") != SUCCESS:
         print "Some error raised in aeolus-configure with parameter -p rhevm !"
@@ -85,12 +93,14 @@ def setupTest():
    
 #body
 def bodyTest():
-#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
-    print "test being started"
+    print "Test being started"
+    print "Checking if file " + ExpectedFile02 + " is on the place"
     if os.path.isfile(ExpectedFile02):
+        print "File " + ExpectedFile02 + " exists"
         return True
     else:
+        print "File " + ExpectedFile02 + " does NOT exists"
         return False
  
 #cleanup after test

@@ -126,7 +126,8 @@ def bodyTest():
         if Counter > TIMEOUT:
             print "Error: timeout over "+str(TIMEOUT)+" minutes !"
             return False
-            
+    outputtmp = os.popen("aeolus-image status --targetimage " + target_image).read()
+    print outputtmp        
     print "Checking if there is any visible password "+password_yaml['parameters']["vsphere_password"]+" in error log of image factory"
     if os.system("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
         print "Found "+password_yaml['parameters']["vsphere_password"]+":"

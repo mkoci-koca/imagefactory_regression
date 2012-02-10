@@ -79,7 +79,8 @@ def bodyTest():
     print "=============================================="
     print "test being started"
     print "Running command " + CrazyCommand
-    os.system(CrazyCommand)
+    retcode = os.popen(CrazyCommand).read()
+    print retcode
     print "Checking if there is any error or failed message in the log..."
     if os.system("grep -i \"error\\|failed\" " +  TmpFile) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"

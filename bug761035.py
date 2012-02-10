@@ -132,7 +132,7 @@ def bodyTest():
                 return False
         
     print "Checking if there is any error in error log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
+    if os.system("grep -i \"FAILED\\|Error\"" + LogFileIF) == SUCCESS:
         print "Found FAILED or error message in log file:"
         outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
         print outputtmp
@@ -141,6 +141,10 @@ def bodyTest():
         outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
         return False
+    
+    for timage in target_image:
+        retcode = os.popen("aeolus-image status --targetimage " + timage).read()
+        print retcode
     return True
  
 #cleanup after test
