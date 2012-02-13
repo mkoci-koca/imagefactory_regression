@@ -79,9 +79,9 @@ def setupTest():
         os.remove(ExpectedFile02)
 
     #remove rhevm.json file if exists
- #   print "Removing file " + ExpectedFile01 + " before aeolus-configure process"
-  #  if os.path.isfile(ExpectedFile01):
-   #     os.remove(ExpectedFile01)
+#   print "Removing file " + ExpectedFile01 + " before aeolus-configure process"
+#  if os.path.isfile(ExpectedFile01):
+#     os.remove(ExpectedFile01)
         
         
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm_configure
