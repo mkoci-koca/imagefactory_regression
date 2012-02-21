@@ -1,0 +1,27 @@
+<template>
+  <name>audrey-client-RHEL6-rhevm</name>
+  <os>    
+    <name>RHEL-6</name>    
+    <version>1</version>
+    <arch>x86_64</arch>
+    <install type="url">
+      <url>http://download.lab.bos.redhat.com/released/RHEL-6/6.1/Server/x86_64/os/</url>
+    </install>
+    <rootpw>redhat</rootpw>
+  </os>
+  <repositories>
+    <repository name="aeolus">
+      <url>http://download.lab.bos.redhat.com/rel-eng/repos/cf-tools-1.0-rhel-6-candidate/x86_64/</url>
+      <signed>False</signed>
+    </repository>
+    <repository name="RHEL">
+      <url>http://download.lab.bos.redhat.com/released/RHEL-6/6.2/Server/x86_64/os/</url>
+    </repository>
+  </repositories>
+  <packages>
+    <package name="aeolus-audrey-agent"/>
+    <package name='rhev-agent'/> 
+    <package name='open-vm-tools'/> 
+  </packages>
+  <description>RHEL61 x86_64 </description>
+</template>
