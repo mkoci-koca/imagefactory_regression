@@ -127,16 +127,20 @@ def bodyTest():
             return False
     outputtmp = os.popen("aeolus-image status --targetimage " + target_image).read()
     print outputtmp        
-    print "Checking if there is any visible password "+password_yaml['parameters']["vsphere_password"]+" in error log of image factory"
-    if os.system("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
-        print "Found "+password_yaml['parameters']["vsphere_password"]+":"
-        outputtmp = os.popen("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF).read()
+    print "Checking if there is any error in erro log of image factory"
+    if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
+        print "Found FAILED or error message in log file:"
+        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
         print outputtmp
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
         print outputtmp
         return False
+    
+    print "The last check of status of each target image..."
+    print "aeolus-image status --targetimage " + target_image
+    os.system("aeolus-image status --targetimage " + target_image + "|grep -i COMPLETE")
     return True
  
 #cleanup after test
