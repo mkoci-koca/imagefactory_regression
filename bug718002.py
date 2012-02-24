@@ -13,10 +13,10 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-#        Regression test for Image Factory #bug755830 
+#        Regression test for Image Factory #bug718002 - support ability to specify push of images that may use local repository content for private clouds 
 #        Created by koca (mkoci@redhat.com)
-#        Date: 06/02/2012
-#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=755830 - oz fails to install an image with a backtrace generated
+#        Date: 24/02/2012
+#        Issue: https://bugzilla.redhat.com/show_bug.cgi?id=718002  
 # return values:
 # 0 - OK: everything OK
 # 1 - Fail: setupTest wasn't OK
@@ -27,6 +27,8 @@
 #necessary libraries
 import os
 import sys
+from syck import *
+configuration = load(file("configuration.yaml", 'r').read())
 #constants 
 SUCCESS=0
 FAILED=1
@@ -35,16 +37,17 @@ RET_BODYTEST=2
 RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
-TIMEOUT=360
-MINUTE=60
-#setup variables, constants
-TmpFile="deleteme_bug755830"
-CrazyCommand="oz-install -d 4 templates/bug755830.tdl |& tee " + TmpFile
+#setup
+LogFileIF=configuration["LogFileIF"]
+LogFileIWH=configuration["LogFileIWH"]
+TmpFile="deleteme_bug718002"
+CrazyCommand="imagefactory --debug --target ec2 --template templates/bug718002.tdl |& tee " + TmpFile
+
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on Bug 755830 - oz fails to install an image with a backtrace generated"
-    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=755830"
+    print "Setup of the regression test based on bug718002 - support ability to specify push of images that may use local repository content for private clouds"
+    print "See the bug for further information - https://bugzilla.redhat.com/show_bug.cgi?id=718002"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
@@ -53,26 +56,39 @@ def setupTest():
     print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-    print "Restart libvirtd daemon..."
-    #os.system("service libvirtd restart")
-    print "We hope libvirtd is running. See the bug 775830 with SELinux issue when service is restart from HUDSON"
+                
+    print "running aeolus-configure -p ec2"
+    if os.system("aeolus-configure -p ec2") != SUCCESS:
+        print "Some error raised in aeolus-configure !"
+        return False
+    print "Clearing log file for Image Factory"
+    os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
     return True
-
-
+   
 #body
 def bodyTest():
+#check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
     print "Running command " + CrazyCommand
-    os.system(CrazyCommand)
+    retcode = os.popen(CrazyCommand).read()
+    print retcode
     print "Checking if there is any error or failed message in the log..."
-    if os.system("grep -i \"error\\|failed\\|oz.OzException.OzException\" " +  TmpFile) == SUCCESS:
-        print "See the output from log file " + TmpFile + ":"
+    if os.system("grep -i \"Repositories cannot be localhost, since they must be reachable from the guest operating system\" " +  TmpFile) != SUCCESS:
+        print "Ergh, it should have failed with some nice messsage like: \"Repositories cannot be localhost, since they must be reachable from the guest operating system\""
+        print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
-        outputtmp = os.popen("cat " + TmpFile).read()
-        print outputtmp   
+        outputtmp = os.popen("cat " + LogFileIF).read()
+        print outputtmp
+        print "See the output from log file " + LogFileIWH + ":"
+        print "======================================================"
+        outputtmp = os.popen("cat " + LogFileIWH).read()
+        print outputtmp     
         return False
     return True
+ 
 #cleanup after test
 def cleanTest():
     print "=============================================="
@@ -103,4 +119,3 @@ else:
     print "Test setup wasn't successful ! Test didn't even proceed !"
     cleanTest()
     sys.exit(RET_SETUPTEST)
-

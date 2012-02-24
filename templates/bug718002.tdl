@@ -1,0 +1,20 @@
+<template>
+  <name>bug737099</name>
+  <description>Generate screenshots in another dir</description>
+  <os>
+    <name>RHEL-6</name>
+    <version>2</version>
+    <arch>x86_64</arch>
+    <install type="url">
+      <url>http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/x86_64/os/</url>
+    </install>
+    <rootpw>redhat</rootpw>
+ </os>
+ <repositories>
+   <repository name='local-jon-rpms'>
+     <url>http://localhost/rpms</url>
+   </repository>
+ </repositories>
+</template>
+
+  
