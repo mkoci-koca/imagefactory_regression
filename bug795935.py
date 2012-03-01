@@ -46,9 +46,6 @@ vsphereJSONFile=configuration["vsphereJSONFile"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
-VSPHEREbugFile=configuration["VSPHEREbugFile"]
-VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
-VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 
 
 def setupTest():
@@ -76,21 +73,6 @@ def setupTest():
         print RHEVMbugFile + " didn't find!"
         return False
     
-    #first backup old vsphere file
-    print "Backup old vsphere configuration file"
-    if os.path.isfile(VSPHEREconfigureFile):
-        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
-    #then copy the conf. file
-    print "Copy vsphere configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
-    if os.path.isfile(VSPHEREbugFile):
-        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
-    else:
-        print VSPHEREbugFile + " didn't find!"
-        return False
-
-    if os.path.isfile(rhvemJSONFile):    
-        os.remove(rhvemJSONFile)
-        
     if os.path.isfile(rhvemJSONFile):    
         os.remove(rhvemJSONFile)
                             
@@ -118,12 +100,6 @@ def bodyTest():
         print "======================================================"
         outputtmp = os.popen("cat " + rhvemJSONFile).read()
         print outputtmp
-        if os.system("grep -i password " +  vsphereJSONFile) == SUCCESS:
-            print "Ergh, there is password in vsphere json file :("
-            print "See the output from json file " + vsphereJSONFile + ":"
-            print "======================================================"
-            outputtmp = os.popen("cat " + vsphereJSONFile).read()
-            print outputtmp
         return False
     return True
  
@@ -134,9 +110,6 @@ def cleanTest():
     if os.path.isfile(RHEVMBackupFile):
         #copy file back rhevm
         shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
-    if os.path.isfile(VSPHEREBackupFile):
-        #copy file back VSPHERE
-        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile)  
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
