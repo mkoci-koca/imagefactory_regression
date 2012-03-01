@@ -26,3 +26,4 @@ bug785028.py  #18. Package group installs need to handle whitespaces
 bug755830.py  #19. oz fails to install an image with a backtrace generated
 bug790528.py  #20. multiprovider build error: RuntimeError: link: /tmp/.guestfs-0/kernel /tmp/.guestfs-0/kernel.10139: File exists
 bug718002.py  #21. support ability to specify push of images that may use local repository content for private clouds
+bug795935.py  #22. Remove plain text passwords from /etc/imagefactory/provider.json files
