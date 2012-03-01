@@ -41,8 +41,8 @@ RET_CLEANTEST=3
 RET_UNEXPECTED_ERROR=4
 ROOTID=0
 #setup
-ExpectedFile01="/etc/imagefactory/vsphere.json"
-ExpectedFile02="/etc/imagefactory/rhevm.json"
+ExpectedFile01=configuration["vsphereJSONFile"]
+ExpectedFile02=configuration["rhvemJSONFile"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
@@ -76,13 +76,7 @@ def setupTest():
     #remove rhevm.json file if exists
     print "Removing file " + ExpectedFile02 + " before aeolus-configure process"
     if os.path.isfile(ExpectedFile02):
-        os.remove(ExpectedFile02)
-
-    #remove rhevm.json file if exists
-#   print "Removing file " + ExpectedFile01 + " before aeolus-configure process"
-#  if os.path.isfile(ExpectedFile01):
-#     os.remove(ExpectedFile01)
-        
+        os.remove(ExpectedFile02)       
         
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm_configure
     print "running aeolus-configure -p rhevm"

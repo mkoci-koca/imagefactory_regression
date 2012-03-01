@@ -16,6 +16,8 @@ ozConfigFile: "/etc/oz/oz.cfg"
 ozBackupFile: "/etc/oz/oz.cfg.bak"
 ozBugFile: "oz/oz_screenshot.cfg"
 ozScreenshotDir: "/var/lib/oz/screenshots"
+rhvemJSONFile: "/etc/imagefactory/rhevm.json"
+vsphereJSONFile: "/etc/imagefactory/vsphere.json"
 
 #let's feed build_image.py test
 #---
