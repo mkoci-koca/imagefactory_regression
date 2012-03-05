@@ -224,7 +224,7 @@ class TestResult(object):
         print "======================================================"
         outputtmp = os.popen("cat "+temporaryfile).read()
         print outputtmp        
-        CrazyCommand = "aeolus-image build --target %s --template " % targetim + temporaryfile
+        CrazyCommand = "aeolus-image build --environment default --target %s --template " % targetim + temporaryfile
         target_image = ""
         try:
             print CrazyCommand
