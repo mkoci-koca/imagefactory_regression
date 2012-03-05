@@ -43,7 +43,7 @@ RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=180
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl;"]
+CrazyCommand=["aeolus-image build --target rhevm,vsphere,ec2 --template templates/bug761035.tdl --environment default"]
 LogFileIF=configuration["LogFileIF"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]

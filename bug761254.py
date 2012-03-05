@@ -49,9 +49,9 @@ ROOTID=0
 TIMEOUT=360
 MINUTE=60
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target rhevm --template templates/bug761254.tdl;",\
-              "aeolus-image build --target ec2 --template templates/bug761254.tdl;",\
-              "aeolus-image build --target vsphere --template templates/bug761254.tdl;"]
+CrazyCommand=["aeolus-image build --target rhevm --template templates/bug761254.tdl --environment default",\
+              "aeolus-image build --target ec2 --template templates/bug761254.tdl --environment default",\
+              "aeolus-image build --target vsphere --template templates/bug761254.tdl --environment default"]
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
 consumer = oauth.Consumer(key='key', secret='secret')

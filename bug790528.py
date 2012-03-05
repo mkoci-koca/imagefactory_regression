@@ -50,7 +50,7 @@ configuration = load(file("configuration.yaml", 'r').read())
 VSPHEREbugFile=configuration["VSPHEREbugFile"]
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
-CrazyCommand="aeolus-image build --target vsphere --template templates/bug790528.tdl;"
+CrazyCommand="aeolus-image build --target vsphere --template templates/bug790528.tdl --environment default"
 LogFileIF=configuration["LogFileIF"]
 target_image=""
 

@@ -43,13 +43,13 @@ RET_UNEXPECTED_ERROR=4
 ROOTID=0
 TIMEOUT=360
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-image build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-image build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-image build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-image build --target rhevm --template templates/bug751209.tdl;",\
-              "aeolus-image build --target vsphere --template templates/bug751209.tdl;",\
-              "aeolus-image build --target vsphere --template templates/bug751209.tdl;"]
+CrazyCommand=["aeolus-image build --target rhevm --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target rhevm --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target rhevm --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target rhevm --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target rhevm --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target vsphere --template templates/bug751209.tdl --environment default;",\
+              "aeolus-image build --target vsphere --template templates/bug751209.tdl --environment default;"]
 configuration = load(file("configuration.yaml", 'r').read())
 LogFileIF=configuration["LogFileIF"]
 #load configuration from a file

@@ -47,7 +47,7 @@ ROOTID=0
 TIMEOUT=360
 MINUTE=60
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target vsphere --template templates/bug783590.tdl;"]
+CrazyCommand=["aeolus-image build --target vsphere --template templates/bug783590.tdl --environment default"]
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
 
@@ -187,9 +187,9 @@ def bodyTest():
             print "======================================================"
             outputtmp = os.popen("cat " + LogFileIWH).read()
             print outputtmp        
-            print "See the template templates/bug768945.tdl"
+            print "See the template templates/bug783590.tdl"
             print "======================================================"
-            outputtmp = os.popen("cat templates/bug768945.tdl").read()
+            outputtmp = os.popen("cat templates/bug783590.tdl").read()
             print outputtmp
             return False    
     return True

@@ -47,7 +47,7 @@ ROOTID=0
 TIMEOUT=360
 MINUTE=60
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target vsphere --template templates/bug785028.tdl;"]
+CrazyCommand=["aeolus-image build --target vsphere --template templates/bug785028.tdl --environment default"]
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
 
