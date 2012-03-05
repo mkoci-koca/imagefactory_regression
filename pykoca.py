@@ -51,11 +51,14 @@ Failed_counter=0 #how many tests failed
 Success_counter=0 #how many tests succeed
 html_header_refresh=""#"<html><head><meta http-equiv=\"refresh\" content=\"5\"></head><body><pre>"
 html_footer=""#"</pre></body></html>"
+argument_counter=0
 
 os.system("date")
 if len(sys.argv) > 1:
+    os.system("We have " + str(len(sys.argv)) + " to test. So let's go ahead and start with the first one...")
     for arg in sys.argv[1:]:
-        os.system("echo \"Test " + arg + " is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"")
+        argument_counter = argument_counter + 1
+        os.system("echo \"Test #" + str(argument_counter) +" ("+ arg + ") is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"")
         os.system("echo \"" + html_header_refresh + "\" > " + arg.strip() + ".log") 
         rettmpvalue=os.system("python "+ arg + " &>> " + arg.strip() + ".log")
         os.system("echo \"" + html_footer + "\" >> " + arg.strip() + ".log")
