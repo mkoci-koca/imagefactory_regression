@@ -342,7 +342,7 @@ def expectSuccess(*args):
     '''Run build via imagefactory command''' 
     alltests.append(TestResult(*args, expect_pass=True, methodCLI=False))
     '''Run build via aeolus-cli command'''
-    alltests.append(TestResult(*args, expect_pass=True, methodCLI=True))
+    #alltests.append(TestResult(*args, expect_pass=True, methodCLI=True))
     
 def expectFail(*args):
     '''Create a TestResult object using provided arguments.  Append result to
