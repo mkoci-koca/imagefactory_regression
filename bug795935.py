@@ -46,6 +46,9 @@ vsphereJSONFile=configuration["vsphereJSONFile"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
+VSPHEREbugFile=configuration["VSPHEREbugFile"]
+VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
+VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 
 
 def setupTest():
@@ -73,13 +76,28 @@ def setupTest():
         print RHEVMbugFile + " didn't find!"
         return False
     
+    #first backup old vsphere file
+    print "Backup old vsphere configuration file"
+    if os.path.isfile(VSPHEREconfigureFile):
+        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
+    #then copy the conf. file
+    print "Copy vsphere configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
+    if os.path.isfile(VSPHEREbugFile):
+        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
+    else:
+        print VSPHEREbugFile + " didn't find!"
+        return False
+    
     if os.path.isfile(rhvemJSONFile):    
         os.remove(rhvemJSONFile)
+
+    if os.path.isfile(vsphereJSONFile):    
+        os.remove(vsphereJSONFile)
                             
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm_configure
-    print "running aeolus-configure -p rhevm"
-    if os.system("aeolus-configure -p rhevm") != SUCCESS:
-        print "Some error raised in aeolus-configure with parameter -p rhevm !"
+    print "running aeolus-configure -p rhevm,vsphere"
+    if os.system("aeolus-configure -p rhevm,vsphere") != SUCCESS:
+        print "Some error raised in aeolus-configure with parameter -p rhevm,vsphere !"
         return False
            
     print "Clearing log file for Image Factory"
@@ -94,13 +112,21 @@ def bodyTest():
     print "=============================================="
     print "test being started"
     print "Checking if there is password in json's files..."
-    if os.system("grep -i password " +  rhvemJSONFile) == SUCCESS:
-        print "Ergh, there is password in rhevm json file :("
+    if os.system("grep -i \"password\|username\" " +  rhvemJSONFile) == SUCCESS:
+        print "Ergh, there is password and/or username in rhevm json file :("
         print "See the output from json file " + rhvemJSONFile + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + rhvemJSONFile).read()
         print outputtmp
         return False
+    else:
+        if os.system("grep -i \"password\|username\" " +  vsphereJSONFile) == SUCCESS:
+            print "Ergh, there is password and/or username in vsphere json file :("
+            print "See the output from json file " + vsphereJSONFile + ":"
+            print "======================================================"
+            outputtmp = os.popen("cat " + vsphereJSONFile).read()
+            print outputtmp            
+            return False
     return True
  
 #cleanup after test
@@ -110,6 +136,10 @@ def cleanTest():
     if os.path.isfile(RHEVMBackupFile):
         #copy file back rhevm
         shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
+        
+    if os.path.isfile(VSPHEREBackupFile):
+        #copy file back vsphere
+        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile) 
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)
