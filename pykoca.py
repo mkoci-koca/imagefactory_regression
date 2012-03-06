@@ -55,7 +55,7 @@ argument_counter=0
 
 os.system("date")
 if len(sys.argv) > 1:
-    os.system("echo \"We have " + str(len(sys.argv)) + " tests to do. So let's go ahead and start with the first one...\"")
+    os.system("echo \"We have " + str(len(sys.argv)-1) + " tests to do. So let's go ahead and start ...\"")
     for arg in sys.argv[1:]:
         argument_counter = argument_counter + 1
         os.system("echo \"Test #" + str(argument_counter) +" ("+ arg + ") is being started. For further info see the log: " + workspace+arg.strip()+ ".log\"")
