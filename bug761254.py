@@ -71,7 +71,7 @@ RHEVMBackupFile=configuration["RHEVMBackupFile"]
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug751209"
+    print "Setup of the regression test based on bug761254"
     print "See the test case https://tcms.engineering.redhat.com/case/122800/?from_plan=4953"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:

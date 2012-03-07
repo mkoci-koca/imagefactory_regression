@@ -30,9 +30,6 @@ import os
 import sys
 import shutil
 from syck import *
-import re
-import subprocess
-import time
 
 #constants 
 SUCCESS=0
@@ -51,13 +48,18 @@ VSPHEREbug755029File=configuration["VSPHEREbug755029File"]
 password_yaml = load(file(VSPHEREbug755029File, 'r').read())
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
-CrazyCommand="aeolus-image build --target vsphere --template templates/bug755029.tdl --environment default;"
+
+TmpFile="deleteme_bug755029"
+CrazyCommand="imagefactory --debug --target vsphere --template templates/bug755029.tdl |& tee " + TmpFile
+
+#CrazyCommand="aeolus-image build --target vsphere --template templates/bug755029.tdl --environment default;"
 LogFileIF=configuration["LogFileIF"]
+LogFileIWH=configuration["LogFileIWH"]
 target_image=""
 
 def setupTest():
     print "=============================================="
-    print "Setup of the regression test based on bug740592"
+    print "Setup of the regression test based on bug755029"
     print "Checking if you have enough permission..."
     if os.geteuid() != ROOTID:
         print "You must have root permissions to run this script, I'm sorry buddy"
@@ -87,6 +89,8 @@ def setupTest():
         return False
     print "Clearing log file for Image Factory"
     os.system("> " + LogFileIF)
+    print "Clearing log file for Image Warehouse"
+    os.system("> " + LogFileIWH)
     return True
    
 #body
@@ -94,40 +98,20 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    try:
-        print CrazyCommand
-        retcode = os.popen(CrazyCommand).read()
-        print "output is :"
-        print retcode
-        tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
-        if tempvar == None:
-            print "An unknown error occurred. I'm not able to get target image ID. Check the log file out. Imagefactory building can be running though"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIF).read()
-            print outputtmp
-            print "Test FAILED =============================================================="
-            return False
-        else:
-            target_image = tempvar.group(1)
-    except subprocess.CalledProcessError, e:
-        print >>sys.stderr, "Execution failed:", e
-        return False
-        time.sleep(10) #sleep for 10 seconds        
-    print "wait until build process is done"
-    #setup counter to do not wait longer then 1 hour
-    Counter=0
-    
-    print "Let\'s check this image: " + target_image
-    while os.system("aeolus-image status --targetimage " + target_image + "|grep -i building") == SUCCESS:
-        Counter=Counter+1
-        #wait a minute
-        time.sleep(TIMEOUT)
-        #after an hour break the 
-        if Counter > TIMEOUT:
-            print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-            return False
-    outputtmp = os.popen("aeolus-image status --targetimage " + target_image).read()
-    print outputtmp        
+    print "Running command " + CrazyCommand
+    retcode = os.popen(CrazyCommand).read()
+    print retcode
+    print "Checking if there is any error or failed message in the log..."
+    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\"") == SUCCESS:
+        print "See the output from log file " + LogFileIF + ":"
+        print "======================================================"
+        outputtmp = os.popen("cat " + LogFileIF).read()
+        print outputtmp
+        print "See the output from log file " + LogFileIWH + ":"
+        print "======================================================"
+        outputtmp = os.popen("cat " + LogFileIWH).read()
+        print outputtmp     
+        return False     
     print "Checking if there is any visible password "+password_yaml['parameters']["vsphere_password"]+" in error log of image factory"
     if os.system("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
         print "Found "+password_yaml['parameters']["vsphere_password"]+":"
@@ -147,6 +131,8 @@ def cleanTest():
     if os.path.isfile(VSPHEREBackupFile):
         #copy file back VSPHERE
         shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile) 
+    if os.path.isfile(TmpFile):
+        os.remove(TmpFile)
     return True
  
 #execute the tests and return value (can be saved as a draft for future tests)

@@ -111,7 +111,7 @@ def bodyTest():
 #check if aeolus-cleanup removes directory. /var/tmp and /var/lib/iwhd/images
     print "=============================================="
     print "test being started"
-    print "Checking if there is password in json's files..."
+    print "Checking if there is password/username in json's files..."
     if os.system("grep -i \"password\|username\" " +  rhvemJSONFile) == SUCCESS:
         print "Ergh, there is password and/or username in rhevm json file :("
         print "See the output from json file " + rhvemJSONFile + ":"
@@ -127,6 +127,12 @@ def bodyTest():
             outputtmp = os.popen("cat " + vsphereJSONFile).read()
             print outputtmp            
             return False
+    outputtmp = os.popen("cat " + vsphereJSONFile).read()
+    print "Vsphere json file " + vsphereJSONFile + ":"
+    print outputtmp
+    outputtmp = os.popen("cat " + rhvemJSONFile).read()
+    print "rhvem json file " + rhvemJSONFile + ":"
+    print outputtmp     
     return True
  
 #cleanup after test

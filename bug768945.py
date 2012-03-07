@@ -27,13 +27,7 @@
 #necessary libraries
 import os
 import sys
-import time
-import subprocess
-import re
 import shutil
-import oauth2 as oauth
-import httplib2
-import json
 from syck import *
 configuration = load(file("configuration.yaml", 'r').read())
 #constants 
@@ -47,18 +41,12 @@ ROOTID=0
 TIMEOUT=360
 MINUTE=60
 #setup variables, constants
-CrazyCommand=["aeolus-image build --target rhevm --template templates/bug768945.tdl --environment default"]
+#CrazyCommand=["aeolus-image build --target rhevm --template templates/bug768945.tdl --environment default"]
+TmpFile="deleteme_bug768945"
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768945.tdl |& tee " + TmpFile 
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
 
-consumer = oauth.Consumer(key='key', secret='secret')
-sig_method = oauth.SignatureMethod_HMAC_SHA1()
-params = {'oauth_version':"0.4.4",
-          'oauth_nonce':oauth.generate_nonce(),
-          'oauth_timestamp':oauth.generate_timestamp(),
-          'oauth_signature_method':sig_method.name,
-          'oauth_consumer_key':consumer.key}
-url_https="https://localhost:8075/imagefactory/builders/"
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
@@ -98,71 +86,15 @@ def setupTest():
     os.system("> " + LogFileIWH)
     return True
 
-#this functions suppose to be as a help function to do not write one code multiple times
-def helpTest(imageTest):
-    url = url_https + imageTest
-    req = oauth.Request(method='GET', url=url, parameters=params)
-    sig = sig_method.sign(req, consumer, None)
-    req['oauth_signature'] = sig
-    r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-    response = 'Response headers: %s\nContent: %s' % (r,c)
-    print response
-    return c
-
 #body
 def bodyTest():
     print "=============================================="
     print "test being started"
-    target_image = list()
-    for command in CrazyCommand:
-        try:
-            print command
-            retcode = os.popen(command).read()
-            print "output is :"
-            print retcode
-            tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
-            if  tempvar == None:
-                print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
-                print "======================================================"
-                outputtmp = os.popen("cat " + LogFileIF).read()
-                print outputtmp
-                print "See the template templates/bug768945.tdl"
-                print "======================================================"
-                outputtmp = os.popen("cat templates/bug768945.tdl").read()
-                print outputtmp
-                return False
-            else:
-                target_image.append(tempvar.group(1))                
-            #target_image.append(re.search(r'.*Target Image: ([a-zA-Z0-9\-]*).*:Status.*',retcode,re.I).group(1))
-        except subprocess.CalledProcessError, e:
-            print >>sys.stderr, "Execution failed:", e
-            return False
-        time.sleep(10) #sleep for 10 seconds        
-    print "wait until build process is done"
-    #setup counter to do not wait longer then 1 hour
-    Counter=0
-    
-    for timage in target_image:
-        print "Let\'s check this image: " + timage
-        data = json.loads(helpTest(timage))
-        print "Data Status: " + data['status']
-        #while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
-        while data['status'] == "BUILDING":
-            Counter=Counter+1
-            #wait a minute
-            time.sleep(MINUTE)
-            data = json.loads(helpTest(timage))
-            print "Data Status: " + data['status']
-            #after an hour break the 
-            if Counter > TIMEOUT:
-                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-                return False
-        
-    print "Checking if there is any error in erro log of image factory"
-    if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
-        print "Found FAILED or error message in log file:"
-        outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
-        print outputtmp
+    print "Running command " + CrazyCommand
+    retcode = os.popen(CrazyCommand).read()
+    print retcode
+    print "Checking if there is any error or failed message in the log..."
+    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\"") == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
@@ -170,28 +102,12 @@ def bodyTest():
         print "See the output from log file " + LogFileIWH + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIWH).read()
-        print outputtmp        
-        return False
-#check if status is either complete or building
-    for timage in target_image:
-        print "Let\'s check this image: " + timage
-        data = json.loads(helpTest(timage))
-        print "Data Status for image "+timage+": " + data['status']
-        if data['status'] != "COMPLETED":
-            print "Build "+timage+" is not completed for some reason! It looks it stuck in the NEW status."
-            print "Perhaps you can find something in the log file " + LogFileIF + ":"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIF).read()
-            print outputtmp
-            print "See the output from log file " + LogFileIWH + " too:"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp        
-            print "See the template templates/bug768945.tdl"
-            print "======================================================"
-            outputtmp = os.popen("cat templates/bug768945.tdl").read()
-            print outputtmp
-            return False    
+        print outputtmp     
+        print "See the template templates/bug768945.tdl"
+        print "======================================================"
+        outputtmp = os.popen("cat templates/bug768945.tdl").read()
+        print outputtmp
+        return False    
     return True
  
 #cleanup after test
@@ -201,6 +117,8 @@ def cleanTest():
     if os.path.isfile(RHEVMBackupFile):
         #copy file back
         shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile)
+    if os.path.isfile(TmpFile):
+        os.remove(TmpFile)
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     return True
  
