@@ -112,10 +112,10 @@ def bodyTest():
         outputtmp = os.popen("cat " + LogFileIWH).read()
         print outputtmp     
         return False     
-    print "Checking if there is any visible password "+password_yaml['parameters']["vsphere_password"]+" in error log of image factory"
-    if os.system("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
-        print "Found "+password_yaml['parameters']["vsphere_password"]+":"
-        outputtmp = os.popen("grep -i \""+password_yaml['parameters']["vsphere_password"]+"\" " + LogFileIF).read()
+    print "Checking if there is any visible password "+password_yaml['classes']['default']["vsphere_password"]+" in error log of image factory"
+    if os.system("grep -i \""+password_yaml['classes']['default']["vsphere_password"]+"\" " + LogFileIF) == SUCCESS:
+        print "Found "+password_yaml['classes']['default']["vsphere_password"]+":"
+        outputtmp = os.popen("grep -i \""+password_yaml['classes']['default']["vsphere_password"]+"\" " + LogFileIF).read()
         print outputtmp
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"

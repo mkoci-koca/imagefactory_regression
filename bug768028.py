@@ -90,7 +90,7 @@ def bodyTest():
     retcode = os.popen(CrazyCommand).read()
     print retcode
     print "Checking if there is any error on error log...."
-    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\"") == SUCCESS:
+    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\\|failed to create directory: File exists\"") == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
