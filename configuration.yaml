@@ -19,6 +19,11 @@ ozScreenshotDir: "/var/lib/oz/screenshots"
 rhvemJSONFile: "/etc/imagefactory/rhevm.json"
 vsphereJSONFile: "/etc/imagefactory/vsphere.json"
 
+#which string should be omitted when searching for fail/error messages in error logs
+ignored_error_messages:
+- "Failed shutting down guest, forcibly killing"
+- "failed to create directory: File exists"
+
 #let's feed build_image.py test
 #---
 installtypes: 
