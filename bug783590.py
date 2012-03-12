@@ -51,6 +51,14 @@ VSPHEREbugFile=configuration["VSPHEREbugFile"]
 VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
 VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
 
+ingoreThisMessages=""
+ingoredmessages=configuration["ignored_error_messages"]
+for i in ingoredmessages:
+    if ingoreThisMessages == "":
+        ingoreThisMessages="\"" + i + "\""
+    else:
+        ingoreThisMessages = ingoreThisMessages + "\|\"" + i + "\""
+
 def setupTest():
     print "=============================================="
     print "Setup of the regression test based on bug783590 -mount_options: /dev/vda2 on /boot: mount: unknown filesystem type 'LVM2_member' for f15 build"
@@ -94,7 +102,7 @@ def bodyTest():
     retcode = os.popen(CrazyCommand).read()
     print retcode
     print "Checking if there is any error or failed message in the log..."
-    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\"") == SUCCESS:
+    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v " + ingoreThisMessages) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
