@@ -44,7 +44,7 @@ MINUTE=60
 
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
-CrazyCommand="imagefactory --debug --target ec2 --template templates/bug785304.tdl |& tee " + LogFileIF
+CrazyCommand="imagefactory --debug --target vsphere --template templates/bug785304.tdl |& tee " + LogFileIF
 
 def setupTest():
     print "=============================================="
@@ -60,9 +60,9 @@ def setupTest():
         print "Some error raised in aeolus-cleanup !"
        
     #now run aeolus-configure -p rhevm and uses the values from /etc/aeolus-configure/nodes/rhevm
-    print "running aeolus-configure -p ec2"
-    if os.system("aeolus-configure -p ec2") != SUCCESS:
-        print "Some error raised in aeolus-configure with parameter -p ec2 !"
+    print "running aeolus-configure -p mock"
+    if os.system("aeolus-configure -p mock") != SUCCESS:
+        print "Some error raised in aeolus-configure with parameter -p mock !"
         return False
     print "Clearing log file for Image Factory"
     os.system("> " + LogFileIF)
