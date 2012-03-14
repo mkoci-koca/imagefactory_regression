@@ -6,7 +6,7 @@
 #
 
 bug689863.py  #1. aeolus-configure should no longer deploy /etc/init.d/iwhd and /etc/iwhd/conf.js
-#bug693514.py  #2. aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images
+#bug693514.py  #2. aeolus-cleanup need to clean up /var/tmp and /var/lib/iwhd/images - temporary disabled as we do not know if this feature will be even implemented
 bug709817.py  #3. iwhd initscript continues on in the face of failure
 bug740592.py  #4. imagefactory needs rhevm.json in /etc/imagefactory now
 bug759988.py  #5. service iwhd fails to start - checking aeolus-check-services 
@@ -27,3 +27,4 @@ bug755830.py  #19. oz fails to install an image with a backtrace generated
 bug790528.py  #20. multiprovider build error: RuntimeError: link: /tmp/.guestfs-0/kernel /tmp/.guestfs-0/kernel.10139: File exists
 bug718002.py  #21. support ability to specify push of images that may use local repository content for private clouds
 bug795935.py  #22. Remove plain text passwords from /etc/imagefactory/provider.json files
+bug785304.py  #23. Error message for an invalid install location should be more sensible
