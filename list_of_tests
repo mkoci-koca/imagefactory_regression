@@ -15,13 +15,13 @@ bug761163.py  #7. RHEL 5.7 failed to build with <?xml version="1.0" encoding="UT
 bug745445.py  #8. Relevant message should be displayed while stopping iwhd
 bug758687.py  #9. Wild char '&' in template will cause XML parse error
 bug768028.py  #10. F16 doesn't build in Factory
-bug761254.py  #11. Imagefactory only allows one image to be built 
+#bug761254.py  #11. Imagefactory only allows one image to be built 
 bug755029.py  #12. aeolus-cli push displays provider account passwd 
 bug768945.py  #13. Build failures using system engine template that installs additional packages
 bug737099.py  #14. RFE: screen shots could default to /var/www/html, include link in logs
 bug783590.py  #15. mount_options: /dev/vda2 on /boot: mount: unknown filesystem type 'LVM2_member' for f15 builds
 bug769938.py  #16. Imagefactory building for condorcloud  FAILED
-bug782950.py  #17. Change "max_concurrent_local_sessions": 1 to "2"
+#bug782950.py  #17. Change "max_concurrent_local_sessions": 1 to "2"
 bug785028.py  #18. Package group installs need to handle whitespaces
 bug755830.py  #19. oz fails to install an image with a backtrace generated
 bug790528.py  #20. multiprovider build error: RuntimeError: link: /tmp/.guestfs-0/kernel /tmp/.guestfs-0/kernel.10139: File exists
