@@ -46,8 +46,14 @@ LogFileIWH=configuration["LogFileIWH"]
 RHEVMbugFile=configuration["RHEVMbugFile"]
 RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
 RHEVMBackupFile=configuration["RHEVMBackupFile"]
-TmpFile="deleteme_bug768028"
-CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + TmpFile
+CrazyCommand="imagefactory --debug --target rhevm --template templates/bug768028.tdl |& tee " + LogFileIF
+ingoreThisMessages=""
+ingoredmessages=configuration["ignored_error_messages"]
+for i in ingoredmessages:
+    if ingoreThisMessages == "":
+        ingoreThisMessages="\"" + i + "\""
+    else:
+        ingoreThisMessages = ingoreThisMessages + "\|\"" + i + "\""
 
 def setupTest():
     print "=============================================="
@@ -90,7 +96,7 @@ def bodyTest():
     retcode = os.popen(CrazyCommand).read()
     print retcode
     print "Checking if there is any error on error log...."
-    if os.system("grep -i \"error\\|failed\" " +  TmpFile + "| grep -v \"failed to create directory: File exists\\|failed to create directory: File exists\"") == SUCCESS:
+    if os.system("grep -i \"error\\|failed\" " +  LogFileIF + "| grep -v "+ingoreThisMessages) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
         outputtmp = os.popen("cat " + LogFileIF).read()
@@ -109,8 +115,6 @@ def bodyTest():
 def cleanTest():
     print "=============================================="
     print "Cleaning the mess after test"    
-    if os.path.isfile(TmpFile):
-        os.remove(TmpFile)
     #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
     if os.path.isfile(RHEVMBackupFile):
     #copy file back rhevm
