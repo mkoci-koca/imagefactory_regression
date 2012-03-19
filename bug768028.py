@@ -51,9 +51,10 @@ ingoreThisMessages=""
 ingoredmessages=configuration["ignored_error_messages"]
 for i in ingoredmessages:
     if ingoreThisMessages == "":
-        ingoreThisMessages="\"" + i + "\""
+        ingoreThisMessages="\"" + i 
     else:
-        ingoreThisMessages = ingoreThisMessages + "\|\"" + i + "\""
+        ingoreThisMessages = ingoreThisMessages + "\\|" + i
+ingoreThisMessages = ingoreThisMessages + "\"" 
 
 def setupTest():
     print "=============================================="
@@ -95,7 +96,7 @@ def bodyTest():
     print "Run command " + CrazyCommand
     retcode = os.popen(CrazyCommand).read()
     print retcode
-    print "Checking if there is any error on error log...."
+    print "Checking if there is any error on error log via command: " + "grep -i \"error\\|failed\" " +  LogFileIF + "| grep -v "+ingoreThisMessages
     if os.system("grep -i \"error\\|failed\" " +  LogFileIF + "| grep -v "+ingoreThisMessages) == SUCCESS:
         print "See the output from log file " + LogFileIF + ":"
         print "======================================================"
