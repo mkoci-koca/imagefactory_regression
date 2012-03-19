@@ -55,9 +55,10 @@ ingoreThisMessages=""
 ingoredmessages=configuration["ignored_error_messages"]
 for i in ingoredmessages:
     if ingoreThisMessages == "":
-        ingoreThisMessages="\"" + i + "\""
+        ingoreThisMessages="\"" + i 
     else:
-        ingoreThisMessages = ingoreThisMessages + "\|\"" + i + "\""
+        ingoreThisMessages = ingoreThisMessages + "\\|" + i
+ingoreThisMessages = ingoreThisMessages + "\"" 
 
 def setupTest():
     print "=============================================="
