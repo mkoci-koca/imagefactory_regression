@@ -28,12 +28,6 @@
 import os
 import sys
 import subprocess
-import oauth2 as oauth
-import httplib2
-import json
-import re
-import time
-import shutil
 from syck import *
 configuration = load(file("configuration.yaml", 'r').read())
 #constants 
@@ -53,16 +47,14 @@ LogFileIWH=configuration["LogFileIWH"]
 alltests = list()
 results = list()
 #dirty information setup
-consumer = oauth.Consumer(key='key', secret='secret')
-#method
-sig_method = oauth.SignatureMethod_HMAC_SHA1()
-'''mandatory information'''
-params = {'oauth_version':"0.4.4",
-          'oauth_nonce':oauth.generate_nonce(),
-          'oauth_timestamp':oauth.generate_timestamp(),
-          'oauth_signature_method':sig_method.name,
-          'oauth_consumer_key':consumer.key}
-url_https="https://localhost:8075/imagefactory/builders/"
+ingoreThisMessages=""
+ingoredmessages=configuration["ignored_error_messages"]
+for i in ingoredmessages:
+    if ingoreThisMessages == "":
+        ingoreThisMessages="\"" + i 
+    else:
+        ingoreThisMessages = ingoreThisMessages + "\\|" + i
+ingoreThisMessages = ingoreThisMessages + "\"" 
 temporaryfile = "deleteme_build_image"
 tmplogfileIF = "deletemeBuildImage.log"
 templatesetupvar = ["""<packages>
@@ -79,14 +71,6 @@ architectures=configuration['architectures']
 installtypes=configuration["installtypes"]      
 #["url", "iso"]
 targetimages=configuration["targetimages"]      
-#["ec2", "rhevm", "mock", "vsphere"]
-
-VSPHEREbugFile=configuration["VSPHEREbugFile"]
-VSPHEREconfigureFile=configuration["VSPHEREconfigureFile"]
-VSPHEREBackupFile=configuration["VSPHEREBackupFile"]
-RHEVMbugFile=configuration["RHEVMbugFile"]
-RHEVMconfigureFile=configuration["RHEVMconfigureFile"]
-RHEVMBackupFile=configuration["RHEVMBackupFile"]
 #distribution to build in imagefactory and aeolus-image
 distros={"RHEL-6":{"2":["http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/", "/iso/RHEL6.2-20111117.0-Server-", "-DVD1.iso"],
                   "1":["http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/", "/iso/RHEL6.1-20110510.1-Server-", "-DVD1.iso"]},
@@ -116,15 +100,9 @@ class TestResult(object):
 #main function to execute the test
     def execute(self):
         if self.expect_pass:
-            if self.methodCLI:
-                return (self.name, self.__runTestAeolusCLI(self.test_args()), "#aeolus-cli")
-            else:
-                return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
+            return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
         else:
-            if self.methodCLI:
-                return (self.name, self.handle_exception(self.test_args()), "#aeolus-cli")
-            else:
-                return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
+            return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
         
     def __getTemplate(self, *args):
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
@@ -181,7 +159,7 @@ class TestResult(object):
             return False   
             
         print "Checking if there is any error in the log of image factory"
-        if os.system("grep -i \"FAILED\\|Error\" " + tmplogfileIF) == SUCCESS:
+        if os.system("grep -i \"error\\|failed\" " +  tmplogfileIF + "| grep -v "+ingoreThisMessages) == SUCCESS:
             print "Found FAILED or error message in log file:"
             outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + tmplogfileIF).read()
             print outputtmp
@@ -209,112 +187,6 @@ class TestResult(object):
             print "Test FAILED =============================================================="    
             return False    
         return True
-            
-    def __runTestAeolusCLI(self, args):
-        global temporaryfile
-        (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
-    #lets clean the logs so there is no obsolete records in it.     
-        print "Clearing log file for Image Factory"
-        os.system("> " + LogFileIF)
-        print "Clearing log file for Image Warehouse"
-        os.system("> " + LogFileIWH)
-        tdlxml = self.__getTemplate(distro, version, arch, installtype, isourlstr, targetim, templatesetup)
-        os.system("echo \""+tdlxml+"\" > "+temporaryfile)
-        print "See the testing template"
-        print "======================================================"
-        outputtmp = os.popen("cat "+temporaryfile).read()
-        print outputtmp        
-        CrazyCommand = "aeolus-image build --environment default --target %s --template " % targetim + temporaryfile
-        target_image = ""
-        try:
-            print CrazyCommand
-            retcode = os.popen(CrazyCommand).read()
-            print "output is :"
-            print retcode
-            #get target image BEGIN
-            tempvar = re.search(r'.*\n.*\n([a-zA-Z0-9\-]*).*',retcode,re.I)
-            if tempvar == None:
-                print "An unknown error occurred. I'm not able to get target image ID. Check the log file out:"
-                print "======================================================"
-                outputtmp = os.popen("cat " + LogFileIF).read()
-                print outputtmp
-                print "Test FAILED =============================================================="
-                return False
-            else:
-                target_image = tempvar.group(1)
-            #get target image END
-        except subprocess.CalledProcessError, e:
-            print >>sys.stderr, "Execution failed:", e
-            return False
-        
-        #setup counter to do not wait longer then 1 hour        
-        print "Wait until build process is done"
-        Counter=0                
-        print "Let\'s check this image: " + target_image
-        data = json.loads(self.__helpTest(target_image))
-        print "Data Status: " + data['status']
-        #while os.system("aeolus-cli status --targetimage " + timage + "|grep -i building") == SUCCESS:
-        while data['status'] == "BUILDING":
-            Counter=Counter+1
-            #wait a minute
-            time.sleep(MINUTE)
-            data = json.loads(self.__helpTest(target_image))
-            print "Data Status: " + data['status']
-            #after an hour break the 
-            if Counter > TIMEOUT:
-                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-                print "Test FAILED =============================================================="
-                return False
-            
-        print "Checking if there is any error in the log of image factory"
-        if os.system("grep -i \"FAILED\\|Error\" " + LogFileIF) == SUCCESS:
-            print "Found FAILED or error message in log file:"
-            outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + LogFileIF).read()
-            print outputtmp
-            print "See the output from log file " + LogFileIF + ":"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIF).read()
-            print outputtmp
-            print "See the output from log file " + LogFileIWH + ":"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp   
-            print "Test FAILED =============================================================="     
-            return False
-        
-    #check if status is either complete or building
-        print "Let\'s check this image: " + target_image
-        data = json.loads(self.__helpTest(target_image))
-        print "Data Status for image "+target_image+": " + data['status']
-        if data['status'] == "FAILED":
-            print "Build "+target_image+" is not completed for some reason! It looks it stuck in the NEW status."
-            print "Perhaps you can find something in the log file " + LogFileIF + ":"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIF).read()
-            print outputtmp
-            print "See the output from log file " + LogFileIWH + " too:"
-            print "======================================================"
-            outputtmp = os.popen("cat " + LogFileIWH).read()
-            print outputtmp  
-            print "Test FAILED =============================================================="      
-            return False 
-        
-        Counter=0
-        while data['status'] in ("BUILDING", "New"):
-            Counter=Counter+1
-            #wait a minute
-            time.sleep(MINUTE)
-            data = json.loads(self.__helpTest(target_image))
-            print "Data Status: " + data['status']
-            if data['status'] == "New":
-                #let's speed up a little bit process as New state looks like stuck
-                Counter = Counter+12
-            #after an hour break the 
-            if Counter > TIMEOUT:
-                print "Error: timeout over "+str(TIMEOUT)+" minutes !"
-                print "Test FAILED =============================================================="
-                return False           
-        return True
     
     def handle_exception(self, args):
         try:
@@ -322,33 +194,18 @@ class TestResult(object):
         except:
             print "(Un)expected error:", sys.exc_info()[0]
             raise
-    
-#this functions suppose to be as a help function to do not write one code multiple times
-    def __helpTest(self, imageTest):
-        url = url_https + imageTest
-        req = oauth.Request(method='GET', url=url, parameters=params)
-        sig = sig_method.sign(req, consumer, None)
-        req['oauth_signature'] = sig
-        r, c = httplib2.Http().request(url, 'GET', None, headers=req.to_header())
-        response = 'Response headers: %s\nContent: %s' % (r,c)
-        print response
-        return c
-
-
 
 def expectSuccess(*args):
     '''Create a TestResult object using provided arguments.  Append result to global 'alltests' list.'''
     global alltests
     '''Run build via imagefactory command''' 
-    alltests.append(TestResult(*args, expect_pass=True, methodCLI=False))
-    '''Run build via aeolus-cli command'''
-    #alltests.append(TestResult(*args, expect_pass=True, methodCLI=True))
+    alltests.append(TestResult(*args, expect_pass=True))
     
 def expectFail(*args):
     '''Create a TestResult object using provided arguments.  Append result to
     global 'alltests' list.'''
     global alltests
-    alltests.append(TestResult(*args, expect_pass=False, methodCLI=True))
+    alltests.append(TestResult(*args, expect_pass=False))
     
 def setupTest():
     print "=============================================="
@@ -362,34 +219,10 @@ def setupTest():
     print "Cleanup configuration...." 
     if os.system("aeolus-cleanup") != SUCCESS:
         print "Some error raised in aeolus-cleanup !"
-            
-    #first backup old rhvm file
-    print "Backup old rhevm configuration file"
-    if os.path.isfile(RHEVMconfigureFile):
-        shutil.copyfile(RHEVMconfigureFile, RHEVMBackupFile)
-    #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/rhevm_configure"
-    if os.path.isfile(RHEVMbugFile):
-        shutil.copyfile(RHEVMbugFile, RHEVMconfigureFile)
-    else:
-        print RHEVMbugFile + " didn't find!"
-        return False
     
-    #first backup old vsphere file
-    print "Backup old vsphere configuration file"
-    if os.path.isfile(VSPHEREconfigureFile):
-        shutil.copyfile(VSPHEREconfigureFile, VSPHEREBackupFile)
-    #then copy the conf. file
-    print "Copy rhevm configuration file to /etc/aeolus-configure/nodes/vsphere_configure"
-    if os.path.isfile(VSPHEREbugFile):
-        shutil.copyfile(VSPHEREbugFile, VSPHEREconfigureFile)
-    else:
-        print VSPHEREbugFile + " didn't find!"
-        return False
-    
-    print "running aeolus-configure -p ec2,vsphere,rhevm,mock"
-    if os.system("aeolus-configure -p ec2,vsphere,rhevm,mock") != SUCCESS:
-        print "Some error raised in aeolus-configure !"
+    print "running aeolus-configure -p mock"
+    if os.system("aeolus-configure -p mock") != SUCCESS:
+        print "Some error raised in aeolus-configure -p mock !"
         return False
     
     print "Clearing log file for Image Factory"
@@ -440,12 +273,6 @@ def cleanTest():
         os.remove(temporaryfile)
     if os.path.isfile(tmplogfileIF):
         os.remove(tmplogfileIF)
-    if os.path.isfile(RHEVMBackupFile):
-        #copy file back rhevm
-        shutil.copyfile(RHEVMBackupFile, RHEVMconfigureFile) 
-    if os.path.isfile(VSPHEREBackupFile):
-        #copy file back VSPHERE
-        shutil.copyfile(VSPHEREBackupFile, VSPHEREconfigureFile)   
     return True    
 #future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
 #TODO: need to create correct cleanup 
