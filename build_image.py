@@ -102,7 +102,7 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
-        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup)
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.__getTemplate(self))
 #main function to execute the test
     def execute(self):
         if self.expect_pass:
@@ -165,16 +165,18 @@ class TestResult(object):
         try:
             print CrazyCommand
             retcode = os.popen(CrazyCommand).read()
-            print "output is :"
             print retcode
         except subprocess.CalledProcessError, e:
             print >>sys.stderr, "Execution failed:", e
             return False   
-            
+        
+        print "Copy ImageFactory log file into Full log file of the ImageFactory before we clear this ImageFactory log file"
+        os.system("cat "+tmplogfileIF+" >> "+FullLogFile)   
+    
         print "Checking if there is any error in the log of image factory"
         if os.system("grep -i \"error\\|failed\" " +  tmplogfileIF + "| grep -v "+ingoreThisMessages) == SUCCESS:
             print "Found FAILED or error message in log file:"
-            outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + tmplogfileIF).read()
+            outputtmp = os.popen("grep -i \"FAILED\\|Error\" " + tmplogfileIF + "| grep -v "+ingoreThisMessages).read()
             print outputtmp
             print "See the output from log file " + LogFileIF + ":"
             print "======================================================"
@@ -247,7 +249,6 @@ def setupTest():
     
     return True    
 
-
 #body of the test
 def bodyTest():
     global templatesetupvar
@@ -287,8 +288,6 @@ def cleanTest():
     print "Removing temporary files"
     if os.path.isfile(temporaryfile):
         os.remove(temporaryfile)
-    print "Copy ImageFactory log file into Full log file of the ImageFactory before we clear this ImageFactory log file"
-    os.system("cat "+tmplogfileIF+" >> "+FullLogFile)   
     if os.path.isfile(tmplogfileIF):
         os.remove(tmplogfileIF)
     return True    
