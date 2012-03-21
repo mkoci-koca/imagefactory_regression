@@ -91,7 +91,7 @@ class TestResult(object):
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{5}-{4}-additional template:\n{6}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{5}-{4}-template:\n{6}".format(*self.test_args())
     
     def getTestNumber(self):
         return getattr(self, "_iCounter") 
@@ -269,7 +269,9 @@ def bodyTest():
     for onetest in alltests:
         results.append(onetest.execute())
     numberOfTests = str(len(results))
+    print "\n\n================================================================================================================================="
     print "============================= Final results of "+ numberOfTests + " tests ========================================================================="
+    print "================================================================================================================================="
     returnvalue = True
     for result in results:
         if result[1] == False:
@@ -277,7 +279,9 @@ def bodyTest():
             print "Image " + str(result[2]) + "/" + numberOfTests + " FAILED ....: " + result[0]
         else:
             print "Image " + str(result[2]) + "/" + numberOfTests + " Passed ....: " + result[0]       
+    print "================================================================================================================================="
     print "============================== For full log see /var/log/"+FullLogFile+"====================================================================================================="
+    print "=================================================================================================================================\n\n"
     return returnvalue
  
 #cleanup after test
