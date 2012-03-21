@@ -31,7 +31,7 @@ installtypes:
 - "url"
 #- "iso"
 targetimages:
-- "ec2"
+#- "ec2"
 #- "rhevm"
 - "mock"
 #- "vsphere"

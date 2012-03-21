@@ -87,6 +87,7 @@ class TestResult(object):
         for k,v in kwargs.items():
             setattr(self, k, v)
         TestResult._iCounter = TestResult._iCounter + 1
+        self._iCounter = TestResult._iCounter
 
     def __repr__(self):
         '''String representation of object'''
@@ -143,9 +144,12 @@ class TestResult(object):
         global tmplogfileIF
         global FullLogFile
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
-        '''Lets copy log file into full log file'''
-        print "Copy ImageFactory log file into Full log file of the ImageFactory before we clear this ImageFactory log file"
-        os.system("cat "+LogFileIF+" >> "+FullLogFile)                
+        '''Clear images from previous build'''
+        os.system("rm -f /var/lib/oz/isos/*")
+        os.system("rm -f /var/lib/oz/isocontent/*")
+        os.system("rm -fr /var/lib/imagefactory/images/*")
+        os.system("rm -f /var/lib/libvirt/images/*")
+        '''Lets copy log file into full log file'''          
 #lets clean the logs so there is no obsolete records in it.     
         print "Clearing log file for Image Factory"
         os.system("> " + LogFileIF)
@@ -269,9 +273,9 @@ def bodyTest():
     for result in results:
         if result[1] == False:
             returnvalue = False
-            print "Test " + str(result[2]) + "/" + numberOfTests + " FAILED ....: " + result[0]
+            print "Image " + str(result[2]) + "/" + numberOfTests + " FAILED ....: " + result[0]
         else:
-            print "Test " + str(result[2]) + "/" + numberOfTests + " Passed ....: " + result[0]       
+            print "Image " + str(result[2]) + "/" + numberOfTests + " Passed ....: " + result[0]       
     print "============================== For full log see /var/log/"+FullLogFile+"====================================================================================================="
     return returnvalue
  
@@ -283,11 +287,11 @@ def cleanTest():
     print "Removing temporary files"
     if os.path.isfile(temporaryfile):
         os.remove(temporaryfile)
+    print "Copy ImageFactory log file into Full log file of the ImageFactory before we clear this ImageFactory log file"
+    os.system("cat "+tmplogfileIF+" >> "+FullLogFile)   
     if os.path.isfile(tmplogfileIF):
         os.remove(tmplogfileIF)
     return True    
-#future TODO: maybe delete all iso's and images beneath directories /var/lib/imagefactory/images/ and /var/lib/oz/isos/
-#TODO: need to create correct cleanup 
  
 #execute the tests and return value (can be saved as a draft for future tests)
 if setupTest(): 
