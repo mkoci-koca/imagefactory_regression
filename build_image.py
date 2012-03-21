@@ -68,11 +68,9 @@ templatesetupvar = ["""<packages>
         </file>
       </files>""", """"""]
 architectures=configuration['architectures']    
-#["i386", "x86_64"]
 installtypes=configuration["installtypes"]      
-#["url", "iso"]
 targetimages=configuration["targetimages"]      
-#distribution to build in imagefactory and aeolus-image
+'''distribution to build in imagefactory and aeolus-image'''
 distros={"RHEL-6":{"2":["http://download.englab.brq.redhat.com/released/RHEL-6/6.2/Server/", "/iso/RHEL6.2-20111117.0-Server-", "-DVD1.iso"],
                   "1":["http://download.englab.brq.redhat.com/released/RHEL-6/6.1/Server/", "/iso/RHEL6.1-20110510.1-Server-", "-DVD1.iso"]},
          "Fedora":{"15":["http://download.englab.brq.redhat.com/released/F-15/GOLD/Fedora/", "/iso/Fedora-15-", "-DVD.iso"],
@@ -91,7 +89,7 @@ class TestResult(object):
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{5}-{4}-template:\n{6}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{5}-{4}-template:\n{6}".format(*self.test_args_name())
     
     def getTestNumber(self):
         return getattr(self, "_iCounter") 
@@ -102,8 +100,12 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup)
+    
+    def test_args_name(self):
         return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.__getTemplate(self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup))
-#main function to execute the test
+    
+    '''main function to execute the test'''
     def execute(self):
         if self.expect_pass:
             return (self.name, self.__runTestImageFactory(self.test_args()), self.getTestNumber())
@@ -150,7 +152,7 @@ class TestResult(object):
         os.system("rm -fr /var/lib/imagefactory/images/*")
         os.system("rm -f /var/lib/libvirt/images/*")
         '''Lets copy log file into full log file'''          
-#lets clean the logs so there is no obsolete records in it.     
+        '''lets clean the logs so there is no obsolete records in it. '''    
         print "Clearing log file for Image Factory"
         os.system("> " + LogFileIF)
         print "Clearing log file for Image Warehouse"

@@ -29,7 +29,7 @@ ignored_error_messages:
 #---
 installtypes: 
 - "url"
-#- "iso"
+- "iso"
 targetimages:
 - "ec2"
 - "rhevm"
