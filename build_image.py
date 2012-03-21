@@ -102,7 +102,7 @@ class TestResult(object):
         return self.__repr__()
 
     def test_args(self):
-        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.__getTemplate(self))
+        return (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.__getTemplate(self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup))
 #main function to execute the test
     def execute(self):
         if self.expect_pass:
