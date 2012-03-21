@@ -12,6 +12,7 @@ VSPHEREconfigureFile: "/etc/aeolus-configure/nodes/vsphere_configure"
 VSPHEREBackupFile: "/etc/aeolus-configure/nodes/vshpere_configure.bck"
 LogFileIF: "/var/log/imagefactory.log"
 LogFileIWH: "/var/log/iwhd.log"
+FullLogFile: "/var/log/imagefactory_full_build_image.log"
 ozConfigFile: "/etc/oz/oz.cfg"
 ozBackupFile: "/etc/oz/oz.cfg.bak"
 ozBugFile: "oz/oz_screenshot.cfg"
@@ -31,9 +32,9 @@ installtypes:
 #- "iso"
 targetimages:
 - "ec2"
-- "rhevm"
+#- "rhevm"
 - "mock"
-- "vsphere"
+#- "vsphere"
 architectures:
-- i386
+#- i386
 - x86_64

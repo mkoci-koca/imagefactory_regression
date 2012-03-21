@@ -43,6 +43,7 @@ MINUTE=60
 #setup
 LogFileIF=configuration["LogFileIF"]
 LogFileIWH=configuration["LogFileIWH"]
+FullLogFile=configuration["FullLogFile"]
 # Define a list to collect all tests
 alltests = list()
 results = list()
@@ -79,16 +80,20 @@ distros={"RHEL-6":{"2":["http://download.englab.brq.redhat.com/released/RHEL-6/6
 
 # Define an object to record test results
 class TestResult(object):
-    
+    _iCounter = 0    
     def __init__(self, *args, **kwargs):
         if len(args) == 7:
             (self.distro, self.version, self.arch, self.installtype, self.isourlstr, self.targetim, self.templatesetup) = args
         for k,v in kwargs.items():
             setattr(self, k, v)
+        TestResult._iCounter = TestResult._iCounter + 1
 
     def __repr__(self):
         '''String representation of object'''
-        return "test-{0}-{1}-{2}-{3}-{5}-{4}-additional template:{6}".format(*self.test_args())
+        return "test-{0}-{1}-{2}-{3}-{5}-{4}-additional template:\n{6}".format(*self.test_args())
+    
+    def getTestNumber(self):
+        return getattr(self, "_iCounter") 
 
     @property
     def name(self):
@@ -100,9 +105,9 @@ class TestResult(object):
 #main function to execute the test
     def execute(self):
         if self.expect_pass:
-            return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
+            return (self.name, self.__runTestImageFactory(self.test_args()), self.getTestNumber())
         else:
-            return (self.name, self.__runTestImageFactory(self.test_args()), "#imagefactory")
+            return (self.name, self.__runTestImageFactory(self.test_args()), self.getTestNumber())
         
     def __getTemplate(self, *args):
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
@@ -136,8 +141,12 @@ class TestResult(object):
     def __runTestImageFactory(self, args):
         global temporaryfile
         global tmplogfileIF
+        global FullLogFile
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
-    #lets clean the logs so there is no obsolete records in it.     
+        '''Lets copy log file into full log file'''
+        print "Copy ImageFactory log file into Full log file of the ImageFactory before we clear this ImageFactory log file"
+        os.system("cat "+LogFileIF+" >> "+FullLogFile)                
+#lets clean the logs so there is no obsolete records in it.     
         print "Clearing log file for Image Factory"
         os.system("> " + LogFileIF)
         print "Clearing log file for Image Warehouse"
@@ -225,10 +234,12 @@ def setupTest():
         print "Some error raised in aeolus-configure -p mock !"
         return False
     
-    print "Clearing log file for Image Factory"
+    print "Clearing log file for ImageFactory"
     os.system("> " + LogFileIF)
     print "Clearing log file for Image Warehouse"
     os.system("> " + LogFileIWH)
+    print "Clearing Full Log file for ImageFactory"
+    os.system("> " + FullLogFile)
     
     return True    
 
@@ -252,15 +263,16 @@ def bodyTest():
     
     for onetest in alltests:
         results.append(onetest.execute())
-    print "==================================================================================================================================="
+    numberOfTests = str(len(results))
+    print "============================= Final results of "+ numberOfTests + " tests ========================================================================="
     returnvalue = True
     for result in results:
         if result[1] == False:
             returnvalue = False
-            print "FAILED ...."+result[2]+": "+result[0]
+            print "Test " + str(result[2]) + "/" + numberOfTests + " FAILED ....: " + result[0]
         else:
-            print "Passed ...."+result[2]+": "+result[0]       
-    print "==================================================================================================================================="
+            print "Test " + str(result[2]) + "/" + numberOfTests + " Passed ....: " + result[0]       
+    print "============================== For full log see /var/log/"+FullLogFile+"====================================================================================================="
     return returnvalue
  
 #cleanup after test
