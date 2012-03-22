@@ -147,8 +147,8 @@ class TestResult(object):
         global FullLogFile
         (distro, version, arch, installtype, isourlstr, targetim, templatesetup) = args
         '''Clear images from previous build'''
-        os.system("rm -f /var/lib/oz/isos/*")
-        os.system("rm -f /var/lib/oz/isocontent/*")
+        #os.system("rm -f /var/lib/oz/isos/*")
+        #os.system("rm -f /var/lib/oz/isocontent/*")
         os.system("rm -fr /var/lib/imagefactory/images/*")
         os.system("rm -f /var/lib/libvirt/images/*")
         '''Lets copy log file into full log file'''          
