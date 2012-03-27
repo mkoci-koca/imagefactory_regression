@@ -31,10 +31,10 @@ installtypes:
 - "url"
 #- "iso"
 targetimages:
-- "ec2"
-- "rhevm"
+#- "ec2"
+#- "rhevm"
 - "mock"
-- "vsphere"
+#- "vsphere"
 architectures:
 - i386
-- x86_64
+#- x86_64

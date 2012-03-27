@@ -278,9 +278,9 @@ def bodyTest():
     for result in results:
         if result[1] == False:
             returnvalue = False
-            print "Image " + str(result[2]) + "/" + numberOfTests + " FAILED ....: " + result[0]
+            print "Image " + str(result[2]) + "/" + numberOfTests + "<font color=\"red\"> FAILED </font>....: " + result[0]
         else:
-            print "Image " + str(result[2]) + "/" + numberOfTests + " Passed ....: " + result[0]       
+            print "Image " + str(result[2]) + "/" + numberOfTests + "<font color=\"red\"> Passed </font>....: " + result[0]       
     print "================================================================================================================================="
     print "============================== For full log see /var/log/"+FullLogFile+"====================================================================================================="
     print "=================================================================================================================================\n\n"
